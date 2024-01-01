@@ -68,10 +68,13 @@ To automate the process, use the following tools
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
 Windows Privilege Escalation use TCM security, official content, YouTube videos
+https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Windows%20-%20Privilege%20Escalation.md
 https://academy.tcm-sec.com/p/windows-privilege-escalation-for-beginners
 Linux Privilege Escalation TCM Linux,  official content, YouTube videos
+https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Linux%20-%20Privilege%20Escalation.md
 https://academy.tcm-sec.com/p/linux-privilege-escalation
-Active Directory official content, this article and search more content
+Windows & Linux privilege escalation mind map
+
 
 LABS Platforms
 One of the best choices for a lab is Tjnull, which includes machines from Hack The Box, TryHackMe, Proving Grounds (practice), and the official OffSec labs for play
