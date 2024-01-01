@@ -411,6 +411,7 @@ history | cat .bashrc
 GoldMine Password/plaintext
 Backup files
 Kernel Search with Google
+motd.legal-displayed
 4. Active Directory.
 Active OSCP is challenging for everyone, and soon I am going to create videos on YouTube. In Active Directory, there are three different machines: Machine01, Machine02, Domain01. The Machine01 machine always begins with initial enumeration and privilege escalation as a standalone. Please use the following steps to work on Active Directory:
 1.       Run net user /domain.
