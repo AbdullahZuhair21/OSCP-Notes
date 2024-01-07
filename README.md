@@ -542,3 +542,6 @@ sudo fuser -k 443/tcp
 -     .\file.ps1
 - you may need to change the policy
 -     Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
+- Injecting a payload in a program using shellter
+- get an exe program from /usr/share/windows-binaries. Operation Mode A --> PE Target /usr/share/windows-binaries/whoami.exe --> Enable Stealth Mode --> Payload L then 1. Lastly launch msfconsole and /Multi/handler
+- 
