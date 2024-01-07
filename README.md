@@ -498,7 +498,7 @@ zip2john file.zip > zip.john
 john zip.john
 Port Kill
 sudo fuser -k 443/tcp
-Client Side Attacks can be done through:
+- Client Side Attacks can be done through:
 - HTML Application
 - Canarytokens then use the following link to check victim's browser
 -     https://explore.whatismybrowser.com/useragents/parse/
