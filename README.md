@@ -75,7 +75,7 @@ To automate the process, use the following tools
 - to detect SQL injection use the following chars (' " \)
 - to comment the remain statement in get reqeust use
 -     --+
-- to comment the remain statement in port reqeust use
+- to comment the remain statement in post reqeust use
 -     '--SPACE 
 -     '-- - 
 -     ' #
