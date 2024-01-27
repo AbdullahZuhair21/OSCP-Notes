@@ -64,6 +64,8 @@ To automate the process, use the following tools
 -     rm ~/.ssh/know_hosts
 -     ssh -p <port> -i <file> root@10.0.2.10
 
+- ftp service
+-     put test.txt
 -----------------------------------------------------------------SQL INJECTION-------------------------------------------------------------------------
 - Cheat Sheet
 -     https://portswigger.net/web-security/sql-injection/cheat-sheet
