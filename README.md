@@ -1,3 +1,4 @@
+HTB writeups machines --> https://rana-khalil.gitbook.io/hack-the-box-oscp-preparation/
 - the appropriate msfvenom payload for each webserver. you need to check the framework from wappalyzer
 -     https://book.hacktricks.xyz/generic-methodologies-and-resources/shells/msfvenom
 ------------------------------------------------------------------cross site scripting-----------------------------------------------------------------------
