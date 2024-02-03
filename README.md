@@ -237,6 +237,11 @@ use the following website for the rainbow table attack
 -     sc query windefend
 -     netsh firewall show state
 -     netsh advfirewall firewall dump
+- Stored Passwrods
+- https://sushant747.gitbooks.io/total-oscp-guide/content/privilege_escalation_windows.html
+- check the open ports in the machine
+-     netstat -ano
+- 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
