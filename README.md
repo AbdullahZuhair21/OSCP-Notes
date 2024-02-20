@@ -226,34 +226,59 @@ use the following website for the rainbow table attack
 
 -----------------------------------------------------------------Windows Privilege Escalation TCM---------------------------------------------------------------------
 - https://github.com/TCM-Course-Resources/Windows-Privilege-Escalation-Resources
+- https://sushant747.gitbooks.io/total-oscp-guide/content/privilege_escalation_windows.html
+Windows Enumeration:
 - system enum
 -     systeminfo
--     check the patches --> wmic qfe
+-     check the patches (HotFixes) --> wmic qfe
 -     list the drives ex. C: D: --> wimc logicaldisk
 -     list the drives ex. C: D: --> wmic logicaldist get caption,description,providername
 - user enum and groups
--     whoami
--     whoami /priv
--     whoami /groups
--     show all users on the machine --> netuser
+-     user that you are logged in with --> whoami
+-     check user privilege --> whoami /priv
+-     check the group that you are belonging to --> whoami /groups
+-     show all users on the machine --> net user
 -     gather info about X user --> net user <username>
 -     check all users in X group --> localgroup <groupname>
 - network enum
 -     ipconfig /all
--     arp -a
--     check the routing table --> route print
--     check open ports on the machine --> netstat -ano
-- password hunting
+-     check all IPs that are connected to the machine --> arp -a
+-     check what other machines are communicating to the machine (Possible to Pivoting) --> route print
+-     check open ports on the machine (Possible to port forwarding) --> netstat -ano
+- password hunting (passwords are in files).make sure in which directory you are then run the command. you also can run the command in the root directory
 -     findstr /si password *.txt *.ini *.config
 - firewall & Antivirus
--     sc query windefend
--     netsh firewall show state
--     netsh advfirewall firewall dump
+-     find info about particular services like windefend --> sc query windefend
+-     list all running services on the machine --> sc queryex type= service
+-     check firewall settings --> netsh firewall show state OR netsh advfirewall firewall dump
+- Automated Tools:
+     Executables:
+         - winPEAS.exe //recommended
+         - Seatbelt.exe (compile)
+         - Watson.exe (compile)
+         - SharpUp.exe (compile)
+     Powershell:
+         - Sherlock.ps1
+         - PowerUp.ps1 //recommended
+         - jaws-enum.ps1
+     Others:
+         - Windows-exploit-suggester-python3 (local) //recommended
+         - Exploit Suggester (Metasploit)
+  
+- Windows-exploit-suggester usage:
+  1- run 'systeminfo' and save it into a <sysinfo.txt>
+  2- download and extract the tool from Git Hub.
+  3- install pip if you don't have it --> curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py; python get-pip.py && pip install xlrd --upgarde
+  4- Update the database --> ./windows-exploit-suggester.py --update
+  5- ./windows-exploit-suggester.py --database <updatedDB.xls> --systeminfo <sysinfo.txt>
   
 - Stored Passwrods
-- https://sushant747.gitbooks.io/total-oscp-guide/content/privilege_escalation_windows.html
 - check the registry. you may find a default password
 -     reg query HKLM /f password /t REG_SZ /s
+  
+1- Escalation Path - Kernel Exploitation
+here is all kernel exploitation from GitHub: https://github.com/SecWiki/windows-kernel-exploits
+
 - Port Forwarding
 - - check the open ports in the machine
 -     netstat -ano
