@@ -1,3 +1,4 @@
+https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master
 HTB writeups machines --> https://rana-khalil.gitbook.io/hack-the-box-oscp-preparation/
 nishang is a Offensive PowerShell for red team
 - https://github.com/samratashok/nishang
@@ -233,6 +234,7 @@ Windows Enumeration:
 -     check the patches (HotFixes) --> wmic qfe
 -     list the drives ex. C: D: --> wimc logicaldisk
 -     list the drives ex. C: D: --> wmic logicaldisk get caption,description,providername
+-     gather information about a file --> get-content file.lnk
 - user enum and groups
 -     user that you are logged in with --> whoami
 -     check user privilege --> whoami /priv
@@ -303,6 +305,14 @@ here is all kernel exploitation from GitHub: https://github.com/SecWiki/windows-
 - now you need to use winexe tool to execute a command in windows
 -     winexe -U Administrator%<Password that you found in the registry> //127.0.0.1 "cmd.exe"
 - run the command multiple times if it doesn't work
+
+3- Windows Subsystem for Linux
+- fist check if bash.exe and wsl.exe are installed
+-     where /R c:\windows bash.exe
+- run either bash.exe or wsl.exe to get a shell then use python tty escape to get a shell
+-     C:\>c:\Windows\WinSxS\amd64_microsoft-windows-lxss-bash_31bf3856ad364e35_10.0.17134.1_none_251beae725bc7de5\bash.exe
+-     python -c 'import pty; pty.spawn("/bin/bash")'
+- check the history or sudo -l and continue linux enum
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
