@@ -635,6 +635,7 @@ Always check guest login and then check public share with write and execute perm
 -     smbmap -H 192.168.10.10   (public shares) (check read write and execute)
 -     smbmap -H 192.168.10.10 -R tmp   (check specific folder like tmp)
 -     enum4linux -a 192.168.10.10   (best command to find details and users list)
+-     smbclient //10.10.10.134/Backups -U " "%" "   (anonymous login)
 -     smbclient -p 4455 -L //192.168.10.10/ -U raman --password=raman1234 (linux)
 -     smbclient -p 4455 //192.168.10.10/scripts -U raman --password raman1234  (login)
 Port 3389 RDP
