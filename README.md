@@ -454,6 +454,13 @@ move the file to the common path and upload the file then start the service agai
 Extract the hash from windows. you need to have sam, security, and system files
 -     secretsdump.py -sam SAM -security SECURITY -system SYSTEM local
 
+-----------------------------------------------------------------Active Directory---------------------------------------------------------------------
+Active Directory:
+.          NTDS.dit is a file that has all of the passwords. stored in %SystemRoot%\NTDS
+
+
+
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
