@@ -536,6 +536,7 @@ Content Discovery:
 -     gobuster dir -u http://192.168.10.10 -w  /wd/directory-list-2.3-big.txt (simple run)
 -     gobuster dir -u http://192.168.10.10:8000 -w  /wd/directory-list-2.3-big.txt (with different port)
 -     gobuster dir -u http://192.168.10.10/raman -w  /wd/directory-list-2.3-big.txt (if you find raman then enumerate raman directory)
+-     ffuf -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u http://10.10.10.75/nibbleblog/FUZZ -e .php,.html,.txt -t 250
 With the help of content discovery, you will find hidden directories, CMS web logins, files, etc. This is a crucial step in OSCP.
 Utilizing content discovery and Nmap, you can identify CMS, static pages, dynamic websites, and important files like databases, .txt, .pdf, etc. Additionally, you can enumerate websites with automated tools such as WPScan, JoomScan, Burp Suite, and uncover web vulnerabilities like RCE, SQLi, upload functionality, XSS, etc.
 If you find any CMS like WordPress, Joomla, etc., simply search on Google for default credentials or exploits of theme, plugin, version etc. In the case of a login page, you can exploit SQL injection and launch a brute-force attack with Hydra. If you identify any CMS, scan it with tools, perform enumeration with brute force, check default usernames and passwords, explore themes, plugins, version exploits, and search on Google. Alternatively, you can discover web vulnerabilities to gain initial access.
