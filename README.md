@@ -458,6 +458,7 @@ Extract the hash from windows. you need to have sam, security, and system files
 Active Directory:
 .          NTDS.dit is a file that has all of the passwords. stored in %SystemRoot%\NTDS
 
+LLMNR Poisoning
 
 
 
