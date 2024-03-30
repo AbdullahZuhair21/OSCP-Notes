@@ -233,6 +233,34 @@ after pivoting u can run different commands like
 pivoting using sshuttle
 -     sshuttle -r raman@<targetIP> <TargetNetwork/CIDR> --ssh-cmd "ssh -i pivot"   (now u can run the commands without proxychains)
 chisel     (check this tool as it's good)
+-----------------------------------------------------------------Linux Privilege Escalation TCM---------------------------------------------------------------------
+system enum
+-     uname -a  (kernel exploitation)
+-     cat /proc/version
+-     cat /etc/issue
+-     lscpu  (machine architectures)
+-     ps aux  (running services)
+user enum and groups
+-     whoami | id
+-     sudo -l  (commands you can run without root pass)
+-     cat /etc/passwd  (enum users)
+-     cat /etc/shadow
+-     cat /etc/group
+-     history
+network enum
+-     ifconfig | ip a  (check the other machines in the network for pivoting)
+-     route | ip route
+-     arp -a | ip neigh
+-     netstat -ano  (check the open ports for port forward)
+password hunting
+-     grep --color=auto -rnw '/' -ie "PASSWORD=" --color=always 2>/dev/null  (check the word password in all machine)
+-     locate password | more  (you may identify a file that contains a password)
+-     find / -name id_rsa 2>/dev/null  (hunt SSH that might allow us to SSH to another user)
+Automated tools:
+- LinPEAS
+- LinENUM
+- Linux-exploit-suggester
+- Linuxprivchecker.py
 -----------------------------------------------------------------Windows Privilege Escalation TCM---------------------------------------------------------------------
 - https://github.com/TCM-Course-Resources/Windows-Privilege-Escalation-Resources
 - https://sushant747.gitbooks.io/total-oscp-guide/content/privilege_escalation_windows.html
