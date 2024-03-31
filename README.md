@@ -281,6 +281,9 @@ if you can read the passwd & shadow files you can use unshadow tool to get the h
 -     find / -name authorized_keys 2>/dev/null
 -     find / -name id_rsa 2>/dev/null  (save the id_rsa in your kali then login using it)
 -     chmod 600 id_rsa | ssh -i id_rsa root@<IP>
+ 
+5- Sudo Shell Escaping
+-     sudo -l | GTFOBins  (check the SUDO)
 -----------------------------------------------------------------Windows Privilege Escalation TCM---------------------------------------------------------------------
 - https://github.com/TCM-Course-Resources/Windows-Privilege-Escalation-Resources
 - https://sushant747.gitbooks.io/total-oscp-guide/content/privilege_escalation_windows.html
