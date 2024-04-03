@@ -294,6 +294,17 @@ if you can read the passwd & shadow files you can use unshadow tool to get the h
 -     sudo -V   (check sudo version) if version < 1.8.26 means && pwfeedback is enabled means there is a vuln
 -     sudo su root   (in the time of typing the password you see **** means pwfeedback is enabled)
 - take the exploit from this URL      https://github.com/saleemrashid/sudo-cve-2019-18634     use THM 'sudo buffer overflow root for your reference'
+
+8- SUID
+rws-rwg-rwt  s for owner user; g for group; t for other users
+-     find / -perm -u=s -type f 2>/dev/null  (finding SUID) | GTFOBins
+
+9- Advanced SUID (Shared Objects)(so injection)
+-     find / -type f -perm 04000 -ls 2>/dev/null  (if you didn't find anything that works with GTFOBins. check files owned by other users (not root) and try to inject)
+run the files and check what is done. then run the file again using strace tool (debugging tool)
+-     strace <SUID file> 2>&1 | grep -i -E "open|access|no such file"     (try to find any file in home directory or something among these lines)
+check if you can modify the file if yes add a malicious code; if file not exist create a file with same name; if you can delete the existing file and create a new one that is good as well
+check hack tricks https://book.hacktricks.xyz/linux-hardening/privilege-escalation
 -----------------------------------------------------------------Windows Privilege Escalation TCM---------------------------------------------------------------------
 - https://github.com/TCM-Course-Resources/Windows-Privilege-Escalation-Resources
 - https://sushant747.gitbooks.io/total-oscp-guide/content/privilege_escalation_windows.html
